@@ -6,11 +6,16 @@ TagManager:
   tags:
   - Controller
   - buildingPlace
+  - Boat
+  - Stick
+  - StickI
+  - Stone
+  - StoneI
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Invertory
   - Water
   - UI
   - Ground

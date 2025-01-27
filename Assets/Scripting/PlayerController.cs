@@ -1,4 +1,3 @@
-using Cinemachine;
 using UnityEngine;
 using Cinemachine;
 
@@ -10,38 +9,35 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 5f;
     public float stamina = 5f;
     public float staminaRecoveryRate = 1f;
-
-    [Header("Look Settings")]
-    public Transform playerCamera;
-    public float mouseSensitivity = 2f;
-    public float maxVerticalAngle = 89f; // Restrict vertical look
-    private float verticalRotation = 0f;
+    public float raycastDistance = 0.1f; // For obstacle detection
+    public LayerMask obstacleLayer; // Obstacles layer mask
+    public Transform[] raycastOrigins; // For obstacle detection
 
     [Header("Interaction Settings")]
     public float interactionRange = 5f;
     public string interactableTag = "Controller";
     public CinemachineVirtualCamera playerCameraVirtual;
     public CinemachineVirtualCamera boatCamera;
-    public MonoBehaviour boatController; // Reference to the BoatController script
+    public MonoBehaviour boatController;
     public GameObject playerController;
 
-    private CharacterController controller;
-    private Vector3 playerVelocity;
-    private bool isGrounded;
+    [Header("Ground Check")]
+    public LayerMask groundLayer;
+    public float groundCheckDistance = 0.1f;
+
+    private Rigidbody rb;
+    private bool isGrounded = false;
     private bool isSprinting = false;
     private bool inBoat = false;
 
     private void Start()
     {
-        // Initialize components
-        controller = GetComponent<CharacterController>();
-
-        // Lock cursor
+        rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
 
-        // Ensure correct initial states
-        boatController.enabled = false; // Disable the boat controller script initially
-        playerController.SetActive(true); // Player controller enabled initially
+        // Disable boat controller initially
+        boatController.enabled = false;
+        playerController.SetActive(true);
     }
 
     private void Update()
@@ -49,74 +45,66 @@ public class PlayerController : MonoBehaviour
         if (!inBoat)
         {
             HandleMovement();
-            HandleLook();
             HandleInteraction();
         }
+
+        isGrounded = CheckGrounded();
     }
 
     private void HandleMovement()
     {
-        // Check if player is grounded
-        isGrounded = controller.isGrounded;
-        if (isGrounded && playerVelocity.y < 0)
-        {
-            playerVelocity.y = 0f;
-        }
-
-        // Movement input
+        // Input for movement
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-        Vector3 move = transform.right * horizontal + transform.forward * vertical;
+        Vector3 moveDirection = new Vector3(horizontal, 0, vertical).normalized;
 
-        // Sprinting
+        // Sprinting logic
         isSprinting = Input.GetKey(KeyCode.LeftShift) && stamina > 0;
         float speed = isSprinting ? sprintSpeed : moveSpeed;
 
         if (isSprinting)
         {
-            stamina -= Time.deltaTime; // Decrease stamina while sprinting
+            stamina -= Time.deltaTime;
         }
         else if (stamina < 5f)
         {
-            stamina += staminaRecoveryRate * Time.deltaTime; // Recover stamina
+            stamina += staminaRecoveryRate * Time.deltaTime;
         }
 
-        controller.Move(move * speed * Time.deltaTime);
+        // Apply movement
+        if (moveDirection.magnitude > 0 && CanMove(moveDirection))
+        {
+            Vector3 velocity = moveDirection * speed;
+            velocity.y = rb.velocity.y; // Preserve vertical velocity
+
+            // Debugging for NaN or infinite values
+            if (float.IsNaN(velocity.x) || float.IsNaN(velocity.y) || float.IsNaN(velocity.z))
+            {
+                Debug.LogError("NaN detected in velocity!");
+            }
+            else if (float.IsInfinity(velocity.x) || float.IsInfinity(velocity.y) || float.IsInfinity(velocity.z))
+            {
+                Debug.LogError("Infinity detected in velocity!");
+            }
+            else
+            {
+                rb.velocity = transform.TransformDirection(velocity);
+            }
+        }
 
         // Jumping
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            playerVelocity.y = jumpForce;
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
-
-        // Apply gravity
-        playerVelocity.y += Physics.gravity.y * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
     }
 
-    private void HandleLook()
-    {
-        // Mouse input
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
-
-        // Horizontal rotation
-        transform.Rotate(Vector3.up * mouseX);
-
-        // Vertical rotation
-        verticalRotation -= mouseY;
-        verticalRotation = Mathf.Clamp(verticalRotation, -maxVerticalAngle, maxVerticalAngle);
-
-        // Apply rotation to camera
-        playerCamera.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-    }
 
     private void HandleInteraction()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            // Shoot a ray from the camera
-            Ray ray = new Ray(playerCamera.position, playerCamera.forward);
+            Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
             if (Physics.Raycast(ray, out RaycastHit hit, interactionRange))
             {
                 if (hit.collider.CompareTag(interactableTag))
@@ -133,19 +121,57 @@ public class PlayerController : MonoBehaviour
 
         if (inBoat)
         {
-            // Switch to boat control
             playerCameraVirtual.Priority = 0;
             boatCamera.Priority = 10;
-            playerController.SetActive(false); // Disable player movement
-            boatController.enabled = true;    // Enable the boat controller script
+            playerController.SetActive(false);
+            boatController.enabled = true;
         }
         else
         {
-            // Switch to player control
             playerCameraVirtual.Priority = 10;
             boatCamera.Priority = 0;
-            playerController.SetActive(true); // Enable player movement
-            boatController.enabled = false;   // Disable the boat controller script
+            playerController.SetActive(true);
+            boatController.enabled = false;
         }
     }
+
+    private bool CanMove(Vector3 direction)
+    {
+        foreach (Transform origin in raycastOrigins)
+        {
+            Vector3 rayDirection = transform.TransformDirection(direction);
+            if (Physics.Raycast(origin.position, rayDirection, raycastDistance, obstacleLayer, QueryTriggerInteraction.Ignore))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private bool CheckGrounded()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer))
+        {
+            rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); // Reset vertical velocity when grounded
+            return true;
+        }
+        return false;
+    }
+    private void FixedUpdate()
+    {
+        CheckRigidbodyState();
+    }
+
+    private void CheckRigidbodyState()
+    {
+        if (float.IsNaN(rb.velocity.x) || float.IsNaN(rb.velocity.y) || float.IsNaN(rb.velocity.z) ||
+            float.IsInfinity(rb.velocity.x) || float.IsInfinity(rb.velocity.y) || float.IsInfinity(rb.velocity.z))
+        {
+            Debug.LogWarning("Invalid Rigidbody state detected! Resetting Rigidbody.");
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+    }
+
+
 }
