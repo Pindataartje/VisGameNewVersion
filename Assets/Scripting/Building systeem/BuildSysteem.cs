@@ -13,7 +13,7 @@ public class BuildSystem : MonoBehaviour
     public List<GameObject> buildableObjects; // List of objects to build
     public List<GameObject> tempObjects; // List of temporary objects corresponding to buildable objects
 
-    private int selectedObjectIndex = 0; // Current selected object index
+    public int selectedObjectIndex = 0; // Current selected object index
 
     public bool placeNow;
     public bool tempObjectExist;
@@ -39,6 +39,13 @@ public class BuildSystem : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKey(KeyCode.Z))
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+        }
+        {
+            
+        }
         if (placeNow && !inDestructionMode) // Prevent raycasting when in destruction mode
         {
             HandleRaycast();
