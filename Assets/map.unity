@@ -825,9 +825,9 @@ MonoBehaviour:
   scriptInteractions: 1
   cpuEvaluateRipples: 0
   customMaterial: {fileID: 0}
-  startSmoothness: 0.95
-  endSmoothness: 0.85
-  smoothnessFadeStart: 100
+  startSmoothness: 0.95000005
+  endSmoothness: 0.8208955
+  smoothnessFadeStart: 47.7
   smoothnessFadeDistance: 500
   tessellation: 1
   maxTessellationFactor: 3
@@ -901,26 +901,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.2
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.3
-      value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -2884,7 +2866,7 @@ PrefabInstance:
     - target: {fileID: 7221258361597933450, guid: 371e7bb54acc9b54d99340e05d998e6f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.8559422
+      value: 5.2953944
       objectReference: {fileID: 0}
     - target: {fileID: 7221258361597933450, guid: 371e7bb54acc9b54d99340e05d998e6f,
         type: 3}
