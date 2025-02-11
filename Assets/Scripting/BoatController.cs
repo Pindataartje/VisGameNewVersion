@@ -1,85 +1,115 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BoatController : MonoBehaviour
 {
     public Rigidbody rb;
 
     // Movement parameters
-    public float enginePower = 2000f;        // Force applied to move the boat forward
-    public float maxSpeed = 20f;            // Maximum forward speed
-    public float reverseSpeed = 5f;         // Maximum reverse speed
-    public float turnSpeed = 5f;            // Turning speed factor
-    public float drag = 0.99f;              // Drag to slow down the boat gradually
+    public float maxEnginePower = 2000f;
+    public float maxSpeed = 20f;
+    public float reverseSpeed = 5f;
+    public float turnSpeed = 5f;
+    public float drag = 0.99f;
+    public float throttleChangeRate = 0.5f; // How quickly throttle changes
 
-    // Steering parameters
-    public float rudderAngle = 15f;         // Max angle the boat can turn (in degrees)
-    public float turnInfluence = 0.1f;      // How much speed affects turning
+    [Header("UI Elements")]
+    public Slider throttleSlider;
+    public Slider speedSlider;
 
-    // Input variables
-    private float forwardInput = 0f;        // Forward/backward input
-    private float turnInput = 0f;           // Turning input
+    private float throttle = 0f; // Current throttle value (-1 to 1)
+    private float speed = 0f;
+    private float forwardInput = 0f;
+    private float turnInput = 0f; // Turn input
+
+    private void Start()
+    {
+        // Initialize sliders
+        throttleSlider.minValue = -1f;
+        throttleSlider.maxValue = 1f;
+
+        speedSlider.minValue = 0f;
+        speedSlider.maxValue = maxSpeed;
+    }
 
     private void FixedUpdate()
     {
-        // Get player input
-        forwardInput = Input.GetAxis("Vertical");   // W/S or Up/Down arrow keys
-        turnInput = Input.GetAxis("Horizontal");   // A/D or Left/Right arrow keys
+        // Update throttle based on input
+        HandleThrottle();
 
-        // Move the boat forward/backward
+        // Get turn input
+        turnInput = Input.GetAxis("Horizontal"); // A/D or Left/Right arrow keys
+
+        // Move the boat
         HandleMovement();
 
-        // Turn the boat realistically
+        // Turn the boat
         HandleTurning();
 
-        // Apply drag to slow the boat naturally
+        // Apply drag
         ApplyDrag();
+
+        // Update UI
+        UpdateSliders();
+    }
+
+    private void HandleThrottle()
+    {
+        if (Input.GetKey(KeyCode.W))
+        {
+            throttle += throttleChangeRate * Time.fixedDeltaTime;
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            throttle -= throttleChangeRate * Time.fixedDeltaTime;
+        }
+
+        // Clamp throttle to range [-1, 1]
+        throttle = Mathf.Clamp(throttle, -1f, 1f);
     }
 
     private void HandleMovement()
     {
-        // Calculate force based on input and engine power
-        float force = forwardInput * enginePower;
+        float enginePower = throttle * maxEnginePower;
 
-        // Forward motion
-        if (forwardInput > 0)
+        if (throttle > 0)
         {
-            // Limit max forward speed
+            // Forward motion
             if (rb.velocity.magnitude < maxSpeed)
             {
-                rb.AddForce(transform.forward * force * Time.fixedDeltaTime, ForceMode.Acceleration);
+                rb.AddForce(transform.forward * enginePower * Time.fixedDeltaTime, ForceMode.Acceleration);
             }
         }
-        // Reverse motion
-        else if (forwardInput < 0)
+        else if (throttle < 0)
         {
-            // Limit max reverse speed
+            // Reverse motion
             if (rb.velocity.magnitude < reverseSpeed)
             {
-                rb.AddForce(transform.forward * force * Time.fixedDeltaTime, ForceMode.Acceleration);
+                rb.AddForce(transform.forward * enginePower * Time.fixedDeltaTime, ForceMode.Acceleration);
             }
         }
+
+        speed = rb.velocity.magnitude;
     }
 
     private void HandleTurning()
     {
         if (rb.velocity.magnitude > 0.1f) // Allow turning only if the boat is moving
         {
-            // Adjust turn based on forward speed
-            float turn = turnInput * turnSpeed * (1 + rb.velocity.magnitude * turnInfluence);
-
-            // Apply turning torque
+            float turn = turnInput * turnSpeed;
             rb.AddTorque(Vector3.up * turn * Time.fixedDeltaTime, ForceMode.VelocityChange);
         }
     }
 
     private void ApplyDrag()
     {
-        // Apply linear drag
         rb.velocity *= drag;
-
-        // Apply angular drag
         rb.angularVelocity *= drag;
+    }
+
+    private void UpdateSliders()
+    {
+        throttleSlider.value = throttle;
+        speedSlider.value = speed;
     }
 }

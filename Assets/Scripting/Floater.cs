@@ -1,34 +1,51 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 
 public class Floater : MonoBehaviour
 {
     public Rigidbody rb;
-    public float depthBefSub;
-    public float displacementAmt;
-    public int floaters;
+    public float depthBeforeSubmersion = 1f; // Depth at which the floater is fully submerged
+    public float displacementAmount = 3f;   // Buoyancy force multiplier
+    public int floaters = 4;                // Number of floaters
 
-    public float waterDrag;
-    public float waterAngularDrag;
-    public WaterSurface water;
+    public float springForce = 10f;         // Spring strength for buoyancy
+    public float dampingForce = 5f;         // Damping to reduce oscillations
+    public float waterDrag = 0.99f;         // Linear drag
+    public float waterAngularDrag = 0.5f;   // Angular drag
 
-    WaterSearchParameters Search;
-    WaterSearchResult SearchResult;
+    public WaterSurface water;              // HDRP Water Surface
+
+    private WaterSearchParameters searchParams;
+    private WaterSearchResult searchResult;
 
     private void FixedUpdate()
     {
+        // Apply gravity divided by the number of floaters
         rb.AddForceAtPosition(Physics.gravity / floaters, transform.position, ForceMode.Acceleration);
-        Search.startPositionWS = transform.position;
-        water.ProjectPointOnWaterSurface(Search, out SearchResult);
 
-        if (transform.position.y < SearchResult.projectedPositionWS.y)
+        // Find the water surface height at the floater's position
+        searchParams.startPositionWS = transform.position;
+        water.ProjectPointOnWaterSurface(searchParams, out searchResult);
+
+        float waterHeight = searchResult.projectedPositionWS.y;
+        float floaterHeight = transform.position.y;
+
+        // If the floater is below the water surface
+        if (floaterHeight < waterHeight)
         {
-            float displacementMulti = Mathf.Clamp01((SearchResult.projectedPositionWS.y - transform.position.y) / depthBefSub) * displacementAmt;
-            rb.AddForceAtPosition(new Vector3(0f, Mathf.Abs(Physics.gravity.y) * displacementMulti, 0f), transform.position, ForceMode.Acceleration);
-            rb.AddForce(displacementMulti * -rb.velocity * waterDrag * Time.fixedDeltaTime, ForceMode.VelocityChange);
-            rb.AddTorque(displacementMulti * -rb.angularVelocity * waterAngularDrag * Time.fixedDeltaTime, ForceMode.VelocityChange);
+            float submersionDepth = waterHeight - floaterHeight;
+            float displacementMultiplier = Mathf.Clamp01(submersionDepth / depthBeforeSubmersion);
+
+            // Apply buoyancy force with spring physics
+            float buoyancyForce = displacementMultiplier * displacementAmount * Mathf.Abs(Physics.gravity.y);
+            float spring = springForce * submersionDepth;
+            float damping = dampingForce * rb.velocity.y;
+
+            rb.AddForceAtPosition(new Vector3(0f, buoyancyForce + spring - damping, 0f), transform.position, ForceMode.Acceleration);
+
+            // Apply linear drag to smooth motion
+            rb.AddForce(displacementMultiplier * -rb.velocity * waterDrag * Time.fixedDeltaTime, ForceMode.VelocityChange);
+            rb.AddTorque(displacementMultiplier * -rb.angularVelocity * waterAngularDrag * Time.fixedDeltaTime, ForceMode.VelocityChange);
         }
     }
 }
