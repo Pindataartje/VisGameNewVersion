@@ -11,6 +11,8 @@ TagManager:
   - StickI
   - Stone
   - StoneI
+  - Rock
+  - Log
   layers:
   - Default
   - TransparentFX
