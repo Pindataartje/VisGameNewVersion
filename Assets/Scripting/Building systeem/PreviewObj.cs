@@ -1,53 +1,76 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PreviewObj : MonoBehaviour
 {
-    public bool isFoundation;
     public List<Collider> colliders = new List<Collider>();
+    public objectSoorts sort;
     public Material green;
     public Material red;
     public bool isBuildAble;
 
+    public bool second;
+    public PreviewObj childcol; // Only used in preview, not in actual object
+    public Transform graphics;
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == 7 && isFoundation)
+        if (other.gameObject.layer == 7)
             colliders.Add(other);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == 7 && isFoundation)
+        if (other.gameObject.layer == 7)
             colliders.Remove(other);
     }
 
     public void Update()
     {
-        ChangeColor();
+        if (!second)
+        {
+            ChangeColor();
+        }
     }
 
     public void ChangeColor()
     {
-        if (colliders.Count == 0)
-            isBuildAble = true;
+        if (sort == objectSoorts.Foundation)
+        {
+            // Foundations can be placed if there's no collider
+            isBuildAble = (colliders.Count == 0);
+        }
         else
-            isBuildAble = false;
-
-        if (isBuildAble)
         {
-            foreach (Transform child in this.transform)
+            //  Only check childcol if it's a preview object (Fix)
+            if (childcol != null)
             {
-                child.GetComponent<Renderer>().material = green;
+                isBuildAble = (colliders.Count == 0 && childcol.colliders.Count > 0);
             }
-        }
-        if (!isBuildAble)
-        {
-            foreach (Transform child in this.transform)
+            else
             {
-                child.GetComponent<Renderer>().material = red;
+                //  If no childcol (e.g., actual build object), just check colliders
+                isBuildAble = (colliders.Count == 0);
             }
         }
 
+        // Change material color based on buildability
+        foreach (Transform child in graphics)
+        {
+            Renderer renderer = child.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material = isBuildAble ? green : red;
+            }
+        }
     }
+}
+
+
+public enum objectSoorts
+{
+    normal,
+    Foundation,
+    Floor
 }
