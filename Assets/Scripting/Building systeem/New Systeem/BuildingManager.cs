@@ -22,10 +22,14 @@ public class BuildingManager : MonoBehaviour
 
     [Header("Internal State")]
     [SerializeField] private bool isbuilding = false;
+    [SerializeField] private bool isDeleting = false;
     [SerializeField] private int currentBuildingIndex;
     private GameObject ghostbuildObject;
     private bool isGhostInValidPosistion = false;
     private Transform modelParent = null;
+    private GameObject lastHighlightedBuilding; // Store the last highlighted building
+    private Dictionary<GameObject, Material[]> originalMaterials = new Dictionary<GameObject, Material[]>(); // Store original materials
+
 
 
     private void Update()
@@ -33,22 +37,56 @@ public class BuildingManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.B))
         {
             isbuilding = !isbuilding;
+            isDeleting = false; // Turn off delete mode when entering build mode
 
-            // Destroy ghost object ONLY when exiting build mode
             if (!isbuilding && ghostbuildObject)
             {
                 Destroy(ghostbuildObject);
                 ghostbuildObject = null;
+            }
+
+            // Reset last highlighted building so it doesn't stay red
+            if (lastHighlightedBuilding != null)
+            {
+                ResetBuildingMaterial(lastHighlightedBuilding);
+                lastHighlightedBuilding = null;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            isDeleting = !isDeleting; // Toggle delete mode
+            isbuilding = false;
+
+            if (!isDeleting && ghostbuildObject)
+            {
+                Destroy(ghostbuildObject);
+                ghostbuildObject = null;
+            }
+
+            // Reset last highlighted building when leaving delete mode
+            if (!isDeleting && lastHighlightedBuilding != null)
+            {
+                ResetBuildingMaterial(lastHighlightedBuilding);
+                lastHighlightedBuilding = null;
             }
         }
 
         if (isbuilding)
         {
             GhostBuild();
-
             if (Input.GetMouseButtonDown(0))
             {
                 PlaceBuild();
+            }
+        }
+
+        if (isDeleting)
+        {
+            HighlightDeletingBuilding();
+            if (Input.GetMouseButtonDown(1)) // Right-click to delete
+            {
+                DeleteHighlightedBuilding();
             }
         }
     }
@@ -306,6 +344,83 @@ public class BuildingManager : MonoBehaviour
 
         }
     }
+
+    private void HighlightDeletingBuilding()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Building"))
+            {
+                GameObject currentBuilding = hit.collider.gameObject;
+
+                // If it's a new building, reset the last one first
+                if (lastHighlightedBuilding != null && lastHighlightedBuilding != currentBuilding)
+                {
+                    ResetBuildingMaterial(lastHighlightedBuilding);
+                }
+
+                // Store original materials if not already stored
+                if (!originalMaterials.ContainsKey(currentBuilding))
+                {
+                    MeshRenderer[] renderers = currentBuilding.GetComponentsInChildren<MeshRenderer>();
+                    Material[] mats = new Material[renderers.Length];
+
+                    for (int i = 0; i < renderers.Length; i++)
+                    {
+                        mats[i] = renderers[i].material;
+                    }
+
+                    originalMaterials[currentBuilding] = mats;
+                }
+
+                // Change to ghostMaterialInvalid
+                foreach (MeshRenderer meshRenderer in currentBuilding.GetComponentsInChildren<MeshRenderer>())
+                {
+                    meshRenderer.material = ghostMaterialInvalid;
+                }
+
+                lastHighlightedBuilding = currentBuilding;
+                return;
+            }
+        }
+
+        // If the raycast is not hitting any building, reset the last highlighted one
+        if (lastHighlightedBuilding != null)
+        {
+            ResetBuildingMaterial(lastHighlightedBuilding);
+            lastHighlightedBuilding = null;
+        }
+    }
+
+    private void ResetBuildingMaterial(GameObject building)
+    {
+        if (originalMaterials.ContainsKey(building))
+        {
+            MeshRenderer[] renderers = building.GetComponentsInChildren<MeshRenderer>();
+            Material[] originalMats = originalMaterials[building];
+
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                renderers[i].material = originalMats[i];
+            }
+
+            originalMaterials.Remove(building); // Remove from dictionary after reset
+        }
+    }
+    private void DeleteHighlightedBuilding()
+    {
+        if (lastHighlightedBuilding != null)
+        {
+            GameObject rootObject = lastHighlightedBuilding.transform.root.gameObject; // Get the root GameObject
+            Destroy(rootObject); // Delete the whole object
+            lastHighlightedBuilding = null; // Clear reference
+        }
+    }
+
+
 }
 [System.Serializable]
 public enum SelectedBuildType

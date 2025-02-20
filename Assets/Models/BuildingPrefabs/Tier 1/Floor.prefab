@@ -681,6 +681,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: assetpack matel foundeson1
       objectReference: {fileID: 0}
+    - target: {fileID: 4521062420748195386, guid: 34277b006cdf23840937ab3b12e09dc0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

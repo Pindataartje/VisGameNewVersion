@@ -14,17 +14,23 @@ public class Connector : MonoBehaviour
     [SerializeField] private bool canConnectToFloor = true;
     [SerializeField] private bool canConnectToWall = true;
 
-    private void OnDrawGizmos()
+    private void Start()
     {
-        Gizmos.color = isConnectedToFloor ? (isConnectedToWall ? Color.red : Color.blue) : (!isConnectedToWall ? Color.green : Color.yellow);
-        Gizmos.DrawWireSphere(transform.position, transform.lossyScale.x / 2f);
+        InvokeRepeating(nameof(AutoUpdateConnections), 0.5f, 0.5f); // Runs every 0.5 sec
     }
+
+    private void AutoUpdateConnections()
+    {
+        UpdateConnectors();
+    }
+
     public void UpdateConnectors(bool rootcall = false)
     {
         Collider[] colliders = Physics.OverlapSphere(transform.position, transform.lossyScale.x / 2f);
 
         isConnectedToFloor = !canConnectToFloor;
         isConnectedToWall = !canConnectToWall;
+
         foreach (Collider collider in colliders)
         {
             if (collider.GetInstanceID() == GetComponent<Collider>().GetInstanceID())
@@ -34,28 +40,33 @@ public class Connector : MonoBehaviour
             if (collider.gameObject.layer == gameObject.layer)
             {
                 Connector foundconnector = collider.GetComponent<Connector>();
-                if (foundconnector.connectorParent == SelectedBuildType.Floor)
+                if (foundconnector != null)
                 {
-                    isConnectedToFloor = true;
-                }
-                if (foundconnector.connectorParent == SelectedBuildType.Wall)
-                {
-                    isConnectedToWall = true;
-                }
+                    if (foundconnector.connectorParent == SelectedBuildType.Floor)
+                    {
+                        isConnectedToFloor = true;
+                    }
+                    if (foundconnector.connectorParent == SelectedBuildType.Wall)
+                    {
+                        isConnectedToWall = true;
+                    }
 
-                if (rootcall)
-                {
-                    foundconnector.UpdateConnectors();
+                    if (rootcall)
+                    {
+                        foundconnector.UpdateConnectors();
+                    }
                 }
             }
         }
 
-        canConnectTo = true;
+        // If both are connected, stop allowing new connections
+        canConnectTo = !(isConnectedToFloor && isConnectedToWall);
+    }
 
-        if (isConnectedToFloor && isConnectedToWall)
-        {
-            canConnectTo = false;
-        }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = isConnectedToFloor ? (isConnectedToWall ? Color.red : Color.blue) : (!isConnectedToWall ? Color.green : Color.yellow);
+        Gizmos.DrawWireSphere(transform.position, transform.lossyScale.x / 2f);
     }
 }
 [System.Serializable]

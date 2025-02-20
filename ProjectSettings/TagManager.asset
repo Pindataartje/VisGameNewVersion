@@ -22,7 +22,7 @@ TagManager:
   - Water
   - UI
   - Ground
-  - Buildable
+  - Building
   - BuildPreview
   - Player
   - BuildingSphere
