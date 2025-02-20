@@ -9,6 +9,7 @@ public class BuildingManager : MonoBehaviour
     [Header("Build Objects")]
     [SerializeField] private List<GameObject> floorobjects = new List<GameObject>();
     [SerializeField] private List<GameObject> wallobjectts = new List<GameObject>();
+    [SerializeField] private List<GameObject> freeformObjects = new List<GameObject>();
 
     [Header("Build Settings")]
     [SerializeField] private SelectedBuildType currentBuildType;
@@ -72,6 +73,21 @@ public class BuildingManager : MonoBehaviour
             }
         }
 
+        // Change build type when 1 or 2 are pressed
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            currentBuildType = SelectedBuildType.Floor;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            currentBuildType = SelectedBuildType.Wall;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3)) // Press 3 to switch to Freeform mode
+        {
+            currentBuildType = SelectedBuildType.FreeFrom;
+        }
+
+
         if (isbuilding)
         {
             GhostBuild();
@@ -98,8 +114,18 @@ public class BuildingManager : MonoBehaviour
         GameObject currentBuild = GetCurrentBuild();
         CreateGhostPrefab(currentBuild);
 
-        MoveGhostToRaycast();
-        checkBuildVadility();
+        if (currentBuildType == SelectedBuildType.FreeFrom)
+        {
+            MoveGhostToRaycast(); // Just move the ghost to the mouse position
+            ghostifyModel(modelParent, ghostMaterialvalid); // Ensure the ghost model is valid
+            isGhostInValidPosistion = true; // Always valid for Freeform
+        }
+        else
+        {
+            // Only perform validity checks for Wall or Floor types
+            MoveGhostToRaycast();
+            checkBuildVadility();
+        }
     }
 
 
@@ -321,6 +347,8 @@ public class BuildingManager : MonoBehaviour
                 return floorobjects[currentBuildingIndex];
             case SelectedBuildType.Wall:
                 return wallobjectts[currentBuildingIndex];
+            case SelectedBuildType.FreeFrom:
+                return freeformObjects[currentBuildingIndex]; // Return the current freeform object
         }
 
         return null;
@@ -328,7 +356,7 @@ public class BuildingManager : MonoBehaviour
 
     private void PlaceBuild()
     {
-        if (ghostbuildObject != null && isGhostInValidPosistion)
+        if (ghostbuildObject != null && (isGhostInValidPosistion || currentBuildType == SelectedBuildType.FreeFrom))
         {
             GameObject newBuild = Instantiate(GetCurrentBuild(), ghostbuildObject.transform.position, ghostbuildObject.transform.rotation);
 
@@ -337,11 +365,7 @@ public class BuildingManager : MonoBehaviour
 
             isbuilding = false;
 
-            foreach (Connector connector in newBuild.GetComponentsInChildren<Connector>())
-            {
-                connector.UpdateConnectors(true);
-            }
-
+            // No need to update connectors for freeform objects
         }
     }
 
@@ -419,12 +443,14 @@ public class BuildingManager : MonoBehaviour
             lastHighlightedBuilding = null; // Clear reference
         }
     }
-
+   
 
 }
 [System.Serializable]
 public enum SelectedBuildType
 {
     Floor,
-    Wall
+    Wall,
+    FreeFrom
+
 }
