@@ -67,16 +67,28 @@ public class BuildingManager : MonoBehaviour
 
     private void CreateGhostPrefab(GameObject currentbuild)
     {
+        if (currentbuild == null)
+        {
+            Debug.LogError("CreateGhostPrefab received a null object!");
+            return;
+        }
+
         if (ghostbuildObject == null)
         {
             ghostbuildObject = Instantiate(currentbuild);
             modelParent = ghostbuildObject.transform.GetChild(0);
 
+            if (modelParent == null)
+            {
+                Debug.LogError("ModelParent is null. Make sure the prefab structure is correct.");
+                return;
+            }
+
             ghostifyModel(modelParent, ghostMaterialvalid);
             ghostifyModel(ghostbuildObject.transform);
-
         }
     }
+
 
     private void MoveGhostToRaycast()
     {
