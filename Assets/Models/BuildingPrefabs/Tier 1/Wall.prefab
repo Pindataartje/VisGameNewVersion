@@ -621,6 +621,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: wooden pack1
       objectReference: {fileID: 0}
+    - target: {fileID: 7313406470374470769, guid: 2b95d544df89da4489a9f3a74ddcd85a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313406470374470769, guid: 2b95d544df89da4489a9f3a74ddcd85a,
+        type: 3}
+      propertyPath: m_TagString
+      value: Buildables
+      objectReference: {fileID: 0}
     - target: {fileID: 7941430278760099531, guid: 2b95d544df89da4489a9f3a74ddcd85a,
         type: 3}
       propertyPath: m_LocalScale.x

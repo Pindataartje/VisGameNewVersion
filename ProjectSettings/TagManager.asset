@@ -14,6 +14,7 @@ TagManager:
   - Rock
   - Log
   - Buildables
+  - Furniture/Items
   layers:
   - Default
   - TransparentFX

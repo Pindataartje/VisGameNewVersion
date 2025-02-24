@@ -77,14 +77,17 @@ public class BuildingManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             currentBuildType = SelectedBuildType.Floor;
+            currentBuildingIndex = 0;
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             currentBuildType = SelectedBuildType.Wall;
+            currentBuildingIndex = 0;
         }
         if (Input.GetKeyDown(KeyCode.Alpha3)) // Press 3 to switch to Freeform mode
         {
             currentBuildType = SelectedBuildType.FreeFrom;
+            currentBuildingIndex = 0;
         }
 
 
@@ -104,6 +107,16 @@ public class BuildingManager : MonoBehaviour
             {
                 DeleteHighlightedBuilding();
             }
+        }
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            currentBuildingIndex ++;
+        }
+
+        // Check if the down arrow key is pressed
+        if (Input.GetKeyDown(KeyCode.DownArrow) && currentBuildingIndex > 0)
+        {
+          currentBuildingIndex --;
         }
     }
 
@@ -175,8 +188,23 @@ public class BuildingManager : MonoBehaviour
         else
         {
             ghostSeperateBuild();
+
+            if (isGhostInValidPosistion)
+            {
+                Collider[] overlapColliders = Physics.OverlapBox(ghostbuildObject.transform.position, new Vector3(2f, 2f, 2f), ghostbuildObject.transform.rotation);
+                foreach (Collider overlapcollider in overlapColliders)
+                {
+                    if (overlapcollider.gameObject != ghostbuildObject && (overlapcollider.transform.root.CompareTag("Buildables") || overlapcollider.transform.root.CompareTag("Furniture/Items")))
+                    {
+                        ghostifyModel(modelParent, ghostMaterialInvalid);
+                        isGhostInValidPosistion = false;
+                        return;
+                    }
+                }
+            }
         }
     }
+
 
     private void ghostConnectedBuild(Collider[] colliders)
     {
@@ -231,13 +259,6 @@ public class BuildingManager : MonoBehaviour
         if (Physics.Raycast(ray, out hit))
         {
             if (currentBuildType == SelectedBuildType.Wall)
-            {
-                ghostifyModel(modelParent, ghostMaterialInvalid);
-                isGhostInValidPosistion = false;
-                return;
-            }
-
-            if (hit.collider.transform.root.CompareTag("Buildables"))
             {
                 ghostifyModel(modelParent, ghostMaterialInvalid);
                 isGhostInValidPosistion = false;
@@ -363,9 +384,9 @@ public class BuildingManager : MonoBehaviour
             Destroy(ghostbuildObject);
             ghostbuildObject = null;
 
-            isbuilding = false;
+           
 
-            // No need to update connectors for freeform objects
+           
         }
     }
 
@@ -452,5 +473,4 @@ public enum SelectedBuildType
     Floor,
     Wall,
     FreeFrom
-
 }

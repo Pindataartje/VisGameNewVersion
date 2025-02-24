@@ -3,40 +3,34 @@ using UnityEngine;
 public class Korte_Movement : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float walkSpeed = 5f; // Renamed from moveSpeed
-    public float jumpHeight = 5f; // Renamed from jumpForce
+    public float walkSpeed = 5f;
+    public float jumpHeight = 5f;
 
     [Header("Mouse Settings")]
     public float lookSensitivity = 100f;
     public Transform cameraTransform;
 
-    [Header("Ground Settings")]
-    public LayerMask groundLayer; // Layer mask for ground detection
+    [Header("Jumpable Layers")]
+    public LayerMask jumpableLayers; // Changed from groundLayer to include multiple layers
 
     private Rigidbody rb;
     private float xRotation = 0f;
-    private bool onFloor; // Renamed from isGrounded
+    private bool onFloor;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-
-        // Lock the cursor
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        // Handle Mouse Look
         MouseLook();
-
-        // Handle Movement
         Movement();
     }
 
     void FixedUpdate()
     {
-        // Handle Jumping
         if (Input.GetButtonDown("Jump") && onFloor)
         {
             Jump();
@@ -57,13 +51,10 @@ public class Korte_Movement : MonoBehaviour
 
     void Movement()
     {
-        float horizontal = Input.GetAxis("Horizontal"); // A/D keys
-        float vertical = Input.GetAxis("Vertical"); // W/S keys
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
 
-        // Calculate movement direction
         Vector3 move = transform.right * horizontal + transform.forward * vertical;
-
-        // Apply movement (preserve Y velocity for physics)
         Vector3 velocity = rb.velocity;
         rb.velocity = new Vector3(move.x * walkSpeed, velocity.y, move.z * walkSpeed);
     }
@@ -75,8 +66,7 @@ public class Korte_Movement : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        // Check if player is on the floor (using layer)
-        if (IsInLayerMask(collision.gameObject.layer, groundLayer))
+        if (IsInLayerMask(collision.gameObject.layer, jumpableLayers))
         {
             onFloor = true;
         }
@@ -84,8 +74,7 @@ public class Korte_Movement : MonoBehaviour
 
     void OnCollisionExit(Collision collision)
     {
-        // Check if player left the floor (using layer)
-        if (IsInLayerMask(collision.gameObject.layer, groundLayer))
+        if (IsInLayerMask(collision.gameObject.layer, jumpableLayers))
         {
             onFloor = false;
         }
