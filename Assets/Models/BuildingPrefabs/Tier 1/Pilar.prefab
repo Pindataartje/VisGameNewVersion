@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3196206021435359603}
   - component: {fileID: 2089519523730502115}
   - component: {fileID: 8866888609883039274}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Conecter (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 3030740288427111600}
   - component: {fileID: 3069092498329476784}
   - component: {fileID: 4929972736120748889}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Conecter (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,7 +263,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4903668410234357690}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Connecters
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -298,7 +298,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4416801152877249910}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pilar
   m_TagString: Buildables
   m_Icon: {fileID: 0}
@@ -334,7 +334,7 @@ GameObject:
   - component: {fileID: 6019381271126884417}
   - component: {fileID: 3285571218246513108}
   - component: {fileID: 1827873390832424968}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pilar
   m_TagString: Buildables
   m_Icon: {fileID: 0}
@@ -438,7 +438,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7490486095697020823}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -474,7 +474,7 @@ GameObject:
   - component: {fileID: 9205532000217857575}
   - component: {fileID: 5913499395497023672}
   - component: {fileID: 2438703723038923726}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Conecter (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -601,7 +601,7 @@ GameObject:
   - component: {fileID: 4197518771372818534}
   - component: {fileID: 2139708044563708382}
   - component: {fileID: 5728591956782120192}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Conecter
   m_TagString: Untagged
   m_Icon: {fileID: 0}

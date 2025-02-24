@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6673940355576937034}
   - component: {fileID: 4824308681549524204}
   - component: {fileID: 4944281622949902361}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Conecter (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 3877021527971533081}
   - component: {fileID: 4623892779308289987}
   - component: {fileID: 1494213823257460234}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Conecter (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,8 +263,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4650693600062965397}
-  - component: {fileID: 7602619017581021409}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Roof Cover
   m_TagString: Buildables
   m_Icon: {fileID: 0}
@@ -288,28 +287,6 @@ Transform:
   - {fileID: 6643647335458106324}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &7602619017581021409
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3119042738679946728}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &3838073212277219549
 GameObject:
   m_ObjectHideFlags: 0
@@ -319,9 +296,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8290803725652406741}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Model
-  m_TagString: Untagged
+  m_TagString: Buildables
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -351,7 +328,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6643647335458106324}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Connecters
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -390,7 +367,7 @@ GameObject:
   - component: {fileID: 3825073935645309780}
   - component: {fileID: 1320038376139171238}
   - component: {fileID: 890643577905705544}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Conecter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -517,7 +494,7 @@ GameObject:
   - component: {fileID: 666892763229898790}
   - component: {fileID: 8079493859183819637}
   - component: {fileID: 6191763919211631488}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Conecter (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

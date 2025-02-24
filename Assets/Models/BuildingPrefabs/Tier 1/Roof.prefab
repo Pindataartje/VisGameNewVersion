@@ -296,9 +296,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8290803725652406741}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Model
-  m_TagString: Untagged
+  m_TagString: Buildables
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -619,7 +619,7 @@ PrefabInstance:
     - target: {fileID: 6929462918971534145, guid: e42c3b162c12a1d49b68ef10670b98a2,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.4819448
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6929462918971534145, guid: e42c3b162c12a1d49b68ef10670b98a2,
         type: 3}
@@ -680,6 +680,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: wooden pack2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7737665071659774459, guid: e42c3b162c12a1d49b68ef10670b98a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7737665071659774459, guid: e42c3b162c12a1d49b68ef10670b98a2,
         type: 3}

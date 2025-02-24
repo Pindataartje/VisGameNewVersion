@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class BuildingManager : MonoBehaviour
 {
+    // Existing variables
     [Header("Build Objects")]
     [SerializeField] private List<GameObject> floorobjects = new List<GameObject>();
     [SerializeField] private List<GameObject> wallobjectts = new List<GameObject>();
@@ -28,17 +29,17 @@ public class BuildingManager : MonoBehaviour
     private GameObject ghostbuildObject;
     private bool isGhostInValidPosistion = false;
     private Transform modelParent = null;
-    private GameObject lastHighlightedBuilding; // Store the last highlighted building
-    private Dictionary<GameObject, Material[]> originalMaterials = new Dictionary<GameObject, Material[]>(); // Store original materials
+    private GameObject lastHighlightedBuilding;
+    private Dictionary<GameObject, Material[]> originalMaterials = new Dictionary<GameObject, Material[]>();
 
-
+    private float currentRotationAngle = 0f; // Store the current rotation angle of the object
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.B))
         {
             isbuilding = !isbuilding;
-            isDeleting = false; // Turn off delete mode when entering build mode
+            isDeleting = false;
 
             if (!isbuilding && ghostbuildObject)
             {
@@ -46,7 +47,6 @@ public class BuildingManager : MonoBehaviour
                 ghostbuildObject = null;
             }
 
-            // Reset last highlighted building so it doesn't stay red
             if (lastHighlightedBuilding != null)
             {
                 ResetBuildingMaterial(lastHighlightedBuilding);
@@ -56,7 +56,7 @@ public class BuildingManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.X))
         {
-            isDeleting = !isDeleting; // Toggle delete mode
+            isDeleting = !isDeleting;
             isbuilding = false;
 
             if (!isDeleting && ghostbuildObject)
@@ -65,7 +65,6 @@ public class BuildingManager : MonoBehaviour
                 ghostbuildObject = null;
             }
 
-            // Reset last highlighted building when leaving delete mode
             if (!isDeleting && lastHighlightedBuilding != null)
             {
                 ResetBuildingMaterial(lastHighlightedBuilding);
@@ -73,23 +72,31 @@ public class BuildingManager : MonoBehaviour
             }
         }
 
-        // Change build type when 1 or 2 are pressed
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            currentBuildType = SelectedBuildType.Floor;
-            currentBuildingIndex = 0;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            currentBuildType = SelectedBuildType.Wall;
-            currentBuildingIndex = 0;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3)) // Press 3 to switch to Freeform mode
-        {
-            currentBuildType = SelectedBuildType.FreeFrom;
-            currentBuildingIndex = 0;
-        }
+      if (Input.GetKeyDown(KeyCode.Alpha1))
+{
+    currentBuildType = SelectedBuildType.Floor;
+    currentBuildingIndex = Mathf.Clamp(currentBuildingIndex, 0, floorobjects.Count - 1);
+}
 
+if (Input.GetKeyDown(KeyCode.Alpha2))
+{
+    currentBuildType = SelectedBuildType.Wall;
+    currentBuildingIndex = Mathf.Clamp(currentBuildingIndex, 0, wallobjectts.Count - 1);
+}
+
+if (Input.GetKeyDown(KeyCode.Alpha3))
+{
+    currentBuildType = SelectedBuildType.FreeFrom;
+    currentBuildingIndex = Mathf.Clamp(currentBuildingIndex, 0, freeformObjects.Count - 1);
+}
+
+
+        // Rotate the object using scroll wheel
+        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+        if (scrollInput != 0f && ghostbuildObject != null)
+        {
+            RotateObject(scrollInput);
+        }
 
         if (isbuilding)
         {
@@ -103,24 +110,41 @@ public class BuildingManager : MonoBehaviour
         if (isDeleting)
         {
             HighlightDeletingBuilding();
-            if (Input.GetMouseButtonDown(1)) // Right-click to delete
+            if (Input.GetMouseButtonDown(1))
             {
                 DeleteHighlightedBuilding();
             }
         }
+
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            currentBuildingIndex ++;
+            currentBuildingIndex++;
         }
 
-        // Check if the down arrow key is pressed
         if (Input.GetKeyDown(KeyCode.DownArrow) && currentBuildingIndex > 0)
         {
-          currentBuildingIndex --;
+            currentBuildingIndex--;
         }
     }
 
+    // Handle the rotation using the scroll wheel (90 degrees increments)
+    private void RotateObject(float scrollInput)
+    {
+        if (scrollInput > 0f) // Scroll Up
+        {
+            currentRotationAngle += 90f;
+        }
+        else if (scrollInput < 0f) // Scroll Down
+        {
+            currentRotationAngle -= 90f;
+        }
 
+        // Clamp the rotation angle between 0 and 360 degrees
+        currentRotationAngle = Mathf.Repeat(currentRotationAngle, 360f);
+
+        // Apply the rotation to the ghost object
+        ghostbuildObject.transform.rotation = Quaternion.Euler(0f, currentRotationAngle, 0f);
+    }
 
     private void GhostBuild()
     {
@@ -129,18 +153,16 @@ public class BuildingManager : MonoBehaviour
 
         if (currentBuildType == SelectedBuildType.FreeFrom)
         {
-            MoveGhostToRaycast(); // Just move the ghost to the mouse position
-            ghostifyModel(modelParent, ghostMaterialvalid); // Ensure the ghost model is valid
-            isGhostInValidPosistion = true; // Always valid for Freeform
+            MoveGhostToRaycast();
+            ghostifyModel(modelParent, ghostMaterialvalid);
+            isGhostInValidPosistion = true;
         }
         else
         {
-            // Only perform validity checks for Wall or Floor types
             MoveGhostToRaycast();
             checkBuildVadility();
         }
     }
-
 
     private void CreateGhostPrefab(GameObject currentbuild)
     {
@@ -166,7 +188,6 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
-
     private void MoveGhostToRaycast()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -177,13 +198,12 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
-
     private void checkBuildVadility()
     {
         Collider[] colliders = Physics.OverlapSphere(ghostbuildObject.transform.position, connectorOverlapRadius, connectedLayer);
         if (colliders.Length > 0)
         {
-            ghostConnectedBuild(colliders); // Pass colliders array
+            ghostConnectedBuild(colliders);
         }
         else
         {
@@ -204,7 +224,6 @@ public class BuildingManager : MonoBehaviour
             }
         }
     }
-
 
     private void ghostConnectedBuild(Collider[] colliders)
     {
@@ -228,28 +247,49 @@ public class BuildingManager : MonoBehaviour
             return;
         }
 
-
         snapGhostPrefabToConnector(bestConnector);
     }
-
-
-
 
     private void snapGhostPrefabToConnector(Connector connector)
     {
         Transform ghostConnector = findSnapConnector(connector.transform, ghostbuildObject.transform.GetChild(1));
-        ghostbuildObject.transform.position = connector.transform.position - (ghostConnector.position - ghostbuildObject.transform.position);
 
-        if (currentBuildType == SelectedBuildType.Wall)
+        if (ghostConnector == null)
         {
-            Quaternion newRotation = ghostbuildObject.transform.rotation;
-            newRotation.eulerAngles = new Vector3(newRotation.eulerAngles.x, connector.transform.rotation.eulerAngles.y, newRotation.eulerAngles.z);
-            ghostbuildObject.transform.rotation = newRotation;
+            Debug.LogError($"No valid snap connector found on {ghostbuildObject.name}");
+            return;
         }
 
+        // Set position by aligning with the connector
+        ghostbuildObject.transform.position = connector.transform.position - (ghostConnector.position - ghostbuildObject.transform.position);
+
+        // Get the connector's normal to determine if it's a wall or floor
+        Vector3 connectorNormal = connector.transform.up; // Assuming 'up' is the direction of the normal for the connector.
+
+        // If it's a wall, apply rotation
+        if (IsWall(connectorNormal))
+        {
+            // Get only the Y-axis rotation of the connector
+            float connectorYRotation = connector.transform.eulerAngles.y;
+
+            // Apply the connector's Y rotation + player's manual rotation
+            ghostbuildObject.transform.rotation = Quaternion.Euler(0f, connectorYRotation + currentRotationAngle, 0f);
+        }
+        else
+        {
+            // If it's the floor, don't apply any rotation
+            ghostbuildObject.transform.rotation = Quaternion.Euler(0f, currentRotationAngle, 0f);
+        }
 
         ghostifyModel(modelParent, ghostMaterialvalid);
         isGhostInValidPosistion = true;
+    }
+
+    private bool IsWall(Vector3 normal)
+    {
+        // Check if the normal vector indicates the object is a wall
+        // Assuming walls have normal vectors along the x or z axis, and floors have a normal of (0, 1, 0)
+        return normal != Vector3.up;  // If the normal is not 'up' (i.e., (0, 1, 0)), consider it a wall
     }
 
     private void ghostSeperateBuild()
@@ -277,7 +317,6 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
-
     private Transform findSnapConnector(Transform snapConnector, Transform ghostConnectorParent)
     {
         ConnectorPositions OppisiteConnectorTag = getOppisitePosition(snapConnector.GetComponent<Connector>());
@@ -303,7 +342,7 @@ public class BuildingManager : MonoBehaviour
 
         if (currentBuildType == SelectedBuildType.Floor
             && connector.connectorParent == SelectedBuildType.Wall
-            && connector.connectorPosition == ConnectorPositions.top) // Fixed line
+            && connector.connectorPosition == ConnectorPositions.top)
         {
             if (connector.transform.root.rotation.y == 0)
             {
@@ -344,21 +383,21 @@ public class BuildingManager : MonoBehaviour
         }
 
     }
+
     private void ghostifyModel(Transform modelParent, Material ghostMaterial = null)
     {
         if (ghostMaterial != null)
         {
-            foreach (MeshRenderer meshRenderer in modelParent.GetComponentsInChildren<MeshRenderer>()) // Fixed GetComponentInChildren  GetComponentsInChildren
+            foreach (MeshRenderer meshRenderer in modelParent.GetComponentsInChildren<MeshRenderer>())
             {
                 meshRenderer.material = ghostMaterial;
             }
         }
-        foreach (Collider modelcollider in modelParent.GetComponentsInChildren<Collider>()) // Fixed GetComponentInChildren  GetComponentsInChildren
+        foreach (Collider modelcollider in modelParent.GetComponentsInChildren<Collider>())
         {
             modelcollider.enabled = false;
         }
     }
-
 
     private GameObject GetCurrentBuild()
     {
@@ -369,7 +408,7 @@ public class BuildingManager : MonoBehaviour
             case SelectedBuildType.Wall:
                 return wallobjectts[currentBuildingIndex];
             case SelectedBuildType.FreeFrom:
-                return freeformObjects[currentBuildingIndex]; // Return the current freeform object
+                return freeformObjects[currentBuildingIndex];
         }
 
         return null;
@@ -383,10 +422,6 @@ public class BuildingManager : MonoBehaviour
 
             Destroy(ghostbuildObject);
             ghostbuildObject = null;
-
-           
-
-           
         }
     }
 
@@ -401,13 +436,11 @@ public class BuildingManager : MonoBehaviour
             {
                 GameObject currentBuilding = hit.collider.gameObject;
 
-                // If it's a new building, reset the last one first
                 if (lastHighlightedBuilding != null && lastHighlightedBuilding != currentBuilding)
                 {
                     ResetBuildingMaterial(lastHighlightedBuilding);
                 }
 
-                // Store original materials if not already stored
                 if (!originalMaterials.ContainsKey(currentBuilding))
                 {
                     MeshRenderer[] renderers = currentBuilding.GetComponentsInChildren<MeshRenderer>();
@@ -421,7 +454,6 @@ public class BuildingManager : MonoBehaviour
                     originalMaterials[currentBuilding] = mats;
                 }
 
-                // Change to ghostMaterialInvalid
                 foreach (MeshRenderer meshRenderer in currentBuilding.GetComponentsInChildren<MeshRenderer>())
                 {
                     meshRenderer.material = ghostMaterialInvalid;
@@ -432,7 +464,6 @@ public class BuildingManager : MonoBehaviour
             }
         }
 
-        // If the raycast is not hitting any building, reset the last highlighted one
         if (lastHighlightedBuilding != null)
         {
             ResetBuildingMaterial(lastHighlightedBuilding);
@@ -452,20 +483,19 @@ public class BuildingManager : MonoBehaviour
                 renderers[i].material = originalMats[i];
             }
 
-            originalMaterials.Remove(building); // Remove from dictionary after reset
+            originalMaterials.Remove(building);
         }
     }
+
     private void DeleteHighlightedBuilding()
     {
         if (lastHighlightedBuilding != null)
         {
-            GameObject rootObject = lastHighlightedBuilding.transform.root.gameObject; // Get the root GameObject
-            Destroy(rootObject); // Delete the whole object
-            lastHighlightedBuilding = null; // Clear reference
+            GameObject rootObject = lastHighlightedBuilding.transform.root.gameObject;
+            Destroy(rootObject);
+            lastHighlightedBuilding = null;
         }
     }
-   
-
 }
 [System.Serializable]
 public enum SelectedBuildType
