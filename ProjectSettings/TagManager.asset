@@ -15,6 +15,7 @@ TagManager:
   - Log
   - Buildables
   - Furniture/Items
+  - Bush
   layers:
   - Default
   - TransparentFX
