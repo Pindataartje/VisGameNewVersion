@@ -11,25 +11,25 @@ public class AnimalAI : MonoBehaviour
     public bool stayAtHideSpot;
     public string hideTag = "Bush";
     public float detectionRange = 10f;
+    public float chaseThreshold = 15f; // Distance at which AI stops chasing
     public float attackRange = 2f;
     public float wanderRadius = 5f;
     public float wanderTimer = 5f;
     public float fleeDistance = 15f;
-    public float walkSpeed = 3.5f; // Walking speed (default speed)
+    public float walkSpeed = 3.5f;
 
-    private float runSpeed; // Running speed (1.5 times the walking speed)
+    private float runSpeed;
     private Transform player;
     private NavMeshAgent agent;
     private bool isHiding = false;
     private GameObject lastHidingSpot = null;
     private Vector3 lastWanderPosition;
+    private bool isChasing = false;
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         agent = GetComponent<NavMeshAgent>();
-
-        // Initialize runSpeed as 1.5x of walkSpeed
         runSpeed = walkSpeed * 1.5f;
 
         if (stayAtHideSpot)
@@ -40,8 +40,6 @@ public class AnimalAI : MonoBehaviour
         {
             StartCoroutine(Wander());
         }
-
-        // Set the initial walking speed
         agent.speed = walkSpeed;
     }
 
@@ -51,23 +49,22 @@ public class AnimalAI : MonoBehaviour
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // Adjust the agent speed based on the current behavior
-        if (behavior == BehaviorType.Flee || behavior == BehaviorType.Approach)
+        if (isChasing && distanceToPlayer > chaseThreshold)
         {
-            agent.speed = runSpeed; // Increase speed to runSpeed (1.5x of walkSpeed)
-        }
-        else
-        {
-            agent.speed = walkSpeed; // Use walkSpeed in other cases
+            isChasing = false;
+            agent.speed = walkSpeed;
+            if (!stayAtHideSpot)
+            {
+                StartCoroutine(Wander());
+            }
+            return;
         }
 
-        if (isHiding && distanceToPlayer <= detectionRange && behavior == BehaviorType.Flee)
-        {
-            FindNewHidingSpotOrFlee();
-        }
-        else if (distanceToPlayer <= detectionRange)
+        if (distanceToPlayer <= detectionRange)
         {
             StopAllCoroutines();
+            isChasing = true;
+            agent.speed = runSpeed;
             if (hides)
             {
                 Hide();
@@ -104,7 +101,7 @@ public class AnimalAI : MonoBehaviour
 
         foreach (GameObject spot in hidingSpots)
         {
-            if (spot == lastHidingSpot) continue; // Avoid going back to the last hiding spot
+            if (spot == lastHidingSpot) continue;
 
             float dist = Vector3.Distance(transform.position, spot.transform.position);
             if (dist < minDistance)
@@ -122,78 +119,32 @@ public class AnimalAI : MonoBehaviour
         }
     }
 
-    void FindNewHidingSpotOrFlee()
-    {
-        GameObject[] hidingSpots = GameObject.FindGameObjectsWithTag(hideTag);
-        GameObject bestHidingSpot = null;
-        float minDistance = Mathf.Infinity;
-
-        foreach (GameObject spot in hidingSpots)
-        {
-            if (spot == lastHidingSpot) continue; // Avoid returning to the last hiding spot
-
-            float dist = Vector3.Distance(transform.position, spot.transform.position);
-            if (dist > attackRange && dist < minDistance)
-            {
-                minDistance = dist;
-                bestHidingSpot = spot;
-            }
-        }
-
-        if (bestHidingSpot != null)
-        {
-            agent.SetDestination(bestHidingSpot.transform.position);
-            lastHidingSpot = bestHidingSpot;
-        }
-        else
-        {
-            Flee();
-        }
-    }
-
-    void Flee()
-    {
-        Vector3 fleeDirection = transform.position + (transform.position - player.position).normalized * fleeDistance;
-        NavMeshHit navHit;
-        if (NavMesh.SamplePosition(fleeDirection, out navHit, fleeDistance, -1))
-        {
-            agent.SetDestination(navHit.position);
-        }
-    }
-
     void Attack()
     {
         Debug.Log(gameObject.name + " is attacking!");
-            print(" Attack");
     }
 
     IEnumerator Wander()
     {
         while (true)
         {
-            // Wait for the specified wanderTimer before setting a new destination
             yield return new WaitForSeconds(wanderTimer);
 
             Vector3 randomDirection;
             NavMeshHit navHit;
 
-            // Ensure the new random position is at least 3 meters away from the last position
             do
             {
-                // Generate a random direction within the wander radius
                 randomDirection = Random.insideUnitSphere * wanderRadius;
                 randomDirection += transform.position;
-
             } while (Vector3.Distance(randomDirection, lastWanderPosition) < 3f);
 
-            // Sample the NavMesh and set the destination if it's valid
             if (NavMesh.SamplePosition(randomDirection, out navHit, wanderRadius, -1))
             {
                 lastWanderPosition = navHit.position;
                 agent.SetDestination(navHit.position);
             }
 
-            // Wait until the agent reaches its destination
             yield return new WaitUntil(() => agent.remainingDistance <= 0.5f);
         }
     }
