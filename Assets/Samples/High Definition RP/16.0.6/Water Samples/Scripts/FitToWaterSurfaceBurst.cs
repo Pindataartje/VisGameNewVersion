@@ -19,30 +19,29 @@ public class FitToWaterSurfaceBurst : MonoBehaviour
     public GameObject prefab;
 
     // List
-    List<GameObject> prefabList;
-    BoxCollider boxCollider;
+    private List<GameObject> prefabList;
+    private BoxCollider boxCollider;
 
     // Input job parameters
-    NativeArray<float3> targetPositionBuffer;
+    private NativeArray<float3> targetPositionBuffer;
 
     // Output job parameters
-    NativeArray<float> errorBuffer;
-    NativeArray<float3> candidatePositionBuffer;
-    NativeArray<float3> projectedPositionWSBuffer;
-    NativeArray<float3> directionBuffer;
-    NativeArray<int> stepCountBuffer;
+    private NativeArray<float> errorBuffer;
+    private NativeArray<float3> candidatePositionBuffer;
+    private NativeArray<float3> projectedPositionWSBuffer;
+    private NativeArray<float3> directionBuffer;
+    private NativeArray<int> stepCountBuffer;
 
-    // Start is called before the first frame update
     void Start()
     {
-        boxCollider = this.GetComponent<BoxCollider>();
+        boxCollider = GetComponent<BoxCollider>();
         Reset();
     }
 
     void Reset()
     {
-        //Dispose buffer if already created
-        OnDestroy();
+        // Dispose of any existing buffers before reallocating
+        DisposeBuffers();
 
         // Allocate the buffers
         targetPositionBuffer = new NativeArray<float3>(count, Allocator.Persistent);
@@ -51,31 +50,31 @@ public class FitToWaterSurfaceBurst : MonoBehaviour
         projectedPositionWSBuffer = new NativeArray<float3>(count, Allocator.Persistent);
         stepCountBuffer = new NativeArray<int>(count, Allocator.Persistent);
         directionBuffer = new NativeArray<float3>(count, Allocator.Persistent);
+
         prefabList = new List<GameObject>();
         prefabList.Clear();
 
-        // Need to do it like this to be able to delete child in edit mode;
-        for (int i = this.transform.childCount; i > 0; --i)
-            SmartDestroy(this.transform.GetChild(0).gameObject);
-
-        for (int x = 0; x < count; ++x)
+        // Remove existing child objects safely
+        for (int i = transform.childCount - 1; i >= 0; --i)
         {
-            GameObject instance = GameObject.Instantiate(prefab);
-            instance.transform.parent = this.transform;
-            instance.transform.localPosition = RandomPointInBounds(GetComponent<Collider>().bounds) - this.transform.position;
-            instance.transform.localEulerAngles = new Vector3(-180, UnityEngine.Random.Range(0,360), 0);
-            prefabList.Add(instance);
+            SmartDestroy(transform.GetChild(i).gameObject);
         }
 
+        // Spawn new objects
+        for (int x = 0; x < count; ++x)
+        {
+            GameObject instance = Instantiate(prefab);
+            instance.transform.SetParent(transform);
+            instance.transform.localPosition = RandomPointInBounds(GetComponent<Collider>().bounds) - transform.position;
+            instance.transform.localEulerAngles = new Vector3(-180, UnityEngine.Random.Range(0, 360), 0);
+            prefabList.Add(instance);
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (waterSurface == null)
+        if (waterSurface == null || !targetPositionBuffer.IsCreated)
             return;
-        if (!targetPositionBuffer.IsCreated)
-            Reset();
 
         // Try to get the simulation data if available
         WaterSimSearchData simData = new WaterSimSearchData();
@@ -88,31 +87,28 @@ public class FitToWaterSurfaceBurst : MonoBehaviour
             targetPositionBuffer[i] = prefabList[i].transform.position;
         }
 
-        // Prepare the first band
-        WaterSimulationSearchJob searchJob = new WaterSimulationSearchJob();
+        // Prepare the job
+        WaterSimulationSearchJob searchJob = new WaterSimulationSearchJob
+        {
+            simSearchData = simData,
+            targetPositionWSBuffer = targetPositionBuffer,
+            startPositionWSBuffer = targetPositionBuffer,
+            maxIterations = 8,
+            error = 0.01f,
+            includeDeformation = includeDeformation,
+            excludeSimulation = false,
+            projectedPositionWSBuffer = projectedPositionWSBuffer,
+            errorBuffer = errorBuffer,
+            candidateLocationWSBuffer = candidatePositionBuffer,
+            directionBuffer = directionBuffer,
+            stepCountBuffer = stepCountBuffer
+        };
 
-        // Assign the simulation data
-        searchJob.simSearchData = simData;
-
-        // Fill the input data
-        searchJob.targetPositionWSBuffer = targetPositionBuffer;
-        searchJob.startPositionWSBuffer = targetPositionBuffer;
-        searchJob.maxIterations = 8;
-        searchJob.error = 0.01f;
-        searchJob.includeDeformation = includeDeformation;
-        searchJob.excludeSimulation = false;
-
-        searchJob.projectedPositionWSBuffer = projectedPositionWSBuffer;
-        searchJob.errorBuffer = errorBuffer;
-        searchJob.candidateLocationWSBuffer = candidatePositionBuffer;
-        searchJob.directionBuffer = directionBuffer;
-        searchJob.stepCountBuffer = stepCountBuffer;
-
-        // Schedule the job with one Execute per index in the results array and only 1 item per processing batch
+        // Schedule and complete the job
         JobHandle handle = searchJob.Schedule(count, 1);
         handle.Complete();
 
-        // Fill the input positions
+        // Update positions
         for (int i = 0; i < prefabList.Count; ++i)
         {
             float3 projectedPosition = projectedPositionWSBuffer[i];
@@ -120,7 +116,8 @@ public class FitToWaterSurfaceBurst : MonoBehaviour
         }
     }
 
-    private Vector3 RandomPointInBounds(Bounds bounds) {
+    private Vector3 RandomPointInBounds(Bounds bounds)
+    {
         return new Vector3(
             UnityEngine.Random.Range(bounds.min.x, bounds.max.x),
             UnityEngine.Random.Range(bounds.min.y, bounds.max.y),
@@ -128,26 +125,30 @@ public class FitToWaterSurfaceBurst : MonoBehaviour
         );
     }
 
+    void DisposeBuffers()
+    {
+        if (targetPositionBuffer.IsCreated) targetPositionBuffer.Dispose();
+        if (errorBuffer.IsCreated) errorBuffer.Dispose();
+        if (candidatePositionBuffer.IsCreated) candidatePositionBuffer.Dispose();
+        if (projectedPositionWSBuffer.IsCreated) projectedPositionWSBuffer.Dispose();
+        if (stepCountBuffer.IsCreated) stepCountBuffer.Dispose();
+        if (directionBuffer.IsCreated) directionBuffer.Dispose();
+    }
+
     void OnDestroy()
     {
-        if(directionBuffer.IsCreated)           directionBuffer.Dispose();
-        if(targetPositionBuffer.IsCreated)      targetPositionBuffer.Dispose();
-        if(errorBuffer.IsCreated)               errorBuffer.Dispose();
-        if(candidatePositionBuffer.IsCreated)   candidatePositionBuffer.Dispose();
-        if(stepCountBuffer.IsCreated)           stepCountBuffer.Dispose();
+        DisposeBuffers();
     }
 
     void OnDisable()
     {
-        OnDestroy();
+        DisposeBuffers();
     }
 
     public static void SmartDestroy(UnityEngine.Object obj)
     {
         if (obj == null)
-        {
-        return;
-        }
+            return;
 
 #if UNITY_EDITOR
         if (EditorApplication.isPlaying)
@@ -162,5 +163,4 @@ public class FitToWaterSurfaceBurst : MonoBehaviour
         Destroy(obj);
 #endif
     }
-
 }

@@ -19,7 +19,6 @@ public class BoatController : MonoBehaviour
 
     private float throttle = 0f; // Current throttle value (-1 to 1)
     private float speed = 0f;
-    private float forwardInput = 0f;
     private float turnInput = 0f; // Turn input
 
     private void Start()
