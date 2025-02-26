@@ -7,8 +7,9 @@ public class Movement : MonoBehaviour
     [Header("Movement Settings")]
     public float walkSpeed = 5f;
     public float jumpForce = 5f;
-    [Tooltip("Multiplier for horizontal control when in the air")]
-    public float airControlMultiplier = 0.5f;
+    public float airControlMultiplier = 0.3f; // Reduced to allow momentum in air
+    public float slopeAcceleration = 3f; // Increases movement down slopes
+    public float maxSlopeAngle = 45f; // Determines when to start sliding
 
     [Header("Sprinting Settings")]
     public float sprintMultiplier = 1.5f;
@@ -20,11 +21,8 @@ public class Movement : MonoBehaviour
     public float stepBobbingAmount = 0.1f;
 
     [Header("Crouch Settings")]
-    [Tooltip("Target transform for the camera when crouching")]
     public Transform crouchCameraTarget;
-    [Tooltip("New collider height when crouching (e.g., 1.213064)")]
     public float crouchColliderHeight = 1.213064f;
-    [Tooltip("New collider center Y when crouching (e.g., -0.3628699)")]
     public float crouchColliderCenterY = -0.3628699f;
 
     [Header("Player Stats")]
@@ -32,18 +30,14 @@ public class Movement : MonoBehaviour
     public float currentHealth = 100f;
     public float maxStamina = 100f;
     public float currentStamina = 100f;
-    [Tooltip("UI Slider for health")]
     public Slider healthSlider;
-    [Tooltip("UI Slider for stamina")]
     public Slider staminaSlider;
 
     [Header("References")]
-    [Tooltip("Assign your Cinemachine Virtual Camera here")]
     public CinemachineVirtualCamera virtualCamera;
-    [Tooltip("Assign the Capsule Collider on your player")]
     public CapsuleCollider capsuleCollider;
+    public LayerMask groundLayer; // For better slope detection
 
-    // Internal variables
     private Rigidbody rb;
     private Transform camTransform;
     private Vector3 camStandLocalPos;
@@ -52,10 +46,13 @@ public class Movement : MonoBehaviour
     private bool isCrouching = false;
     private float stepTimer = 0f;
     private bool isGrounded = false;
+    private bool isSliding = false;
+    private Vector3 slopeNormal;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true; // Prevents unintended physics rotations
 
         if (virtualCamera != null)
         {
@@ -83,9 +80,9 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
+        CheckGround();
         HandleInput();
 
-        // Only run step bobbing when not crouching.
         if (!isCrouching)
             HandleStepBobbing();
         else if (crouchCameraTarget != null)
@@ -96,77 +93,96 @@ public class Movement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Gravity and physics are handled by the Rigidbody.
+        if (isSliding)
+        {
+            HandleSlopeSliding();
+        }
     }
 
     void HandleInput()
     {
-        // Use the capsule collider's bounds for a reliable ground check.
-        float groundDistance = capsuleCollider.bounds.extents.y + 0.1f;
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, groundDistance);
-
-        // Movement input
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
         Vector3 moveDir = (transform.right * moveX + transform.forward * moveZ).normalized;
 
-        // Determine speed – sprinting if LeftShift is held, moving, grounded, and stamina is available.
-        float currentSpeed = 0f;
-        if (isGrounded && Input.GetKey(KeyCode.LeftShift) && moveDir.magnitude > 0.1f && currentStamina > 0)
+        float currentSpeed = walkSpeed;
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded && moveDir.magnitude > 0.1f && currentStamina > 0;
+
+        if (isSprinting)
         {
-            currentSpeed = walkSpeed * sprintMultiplier;
+            currentSpeed *= sprintMultiplier;
             currentStamina -= staminaConsumptionRate * Time.deltaTime;
-            if (currentStamina < 0)
-                currentStamina = 0;
+            if (currentStamina < 0) currentStamina = 0;
         }
         else
         {
-            currentSpeed = isGrounded ? walkSpeed : walkSpeed * airControlMultiplier;
             currentStamina += staminaRecoveryRate * Time.deltaTime;
-            if (currentStamina > maxStamina)
-                currentStamina = maxStamina;
+            if (currentStamina > maxStamina) currentStamina = maxStamina;
         }
 
-        // Preserve the vertical velocity while updating horizontal movement.
-        Vector3 currentVelocity = rb.velocity;
-        Vector3 desiredVelocity = moveDir * currentSpeed;
-        currentVelocity.x = desiredVelocity.x;
-        currentVelocity.z = desiredVelocity.z;
-        rb.velocity = currentVelocity;
+        if (isGrounded)
+        {
+            Vector3 moveVector = AdjustVelocityForSlope(moveDir * currentSpeed);
+            rb.velocity = new Vector3(moveVector.x, rb.velocity.y, moveVector.z);
+        }
+        else
+        {
+            Vector3 airMove = moveDir * (currentSpeed * airControlMultiplier);
+            rb.velocity += new Vector3(airMove.x, 0, airMove.z) * Time.deltaTime;
+        }
 
-        // Jumping: if on ground and Jump is pressed, reset vertical velocity and add jump force.
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
         }
 
-        // Crouching: hold LeftControl to stay crouched.
         if (Input.GetKey(KeyCode.LeftControl))
-        {
             Crouch();
+        else
+            StandUp();
+    }
+
+    void CheckGround()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, capsuleCollider.bounds.extents.y + 0.2f, groundLayer))
+        {
+            isGrounded = true;
+            slopeNormal = hit.normal;
+
+            float angle = Vector3.Angle(Vector3.up, slopeNormal);
+            isSliding = angle > maxSlopeAngle;
         }
         else
         {
-            StandUp();
+            isGrounded = false;
+            isSliding = false;
         }
+    }
+
+    Vector3 AdjustVelocityForSlope(Vector3 moveDir)
+    {
+        if (Vector3.Angle(Vector3.up, slopeNormal) <= maxSlopeAngle)
+        {
+            return Vector3.ProjectOnPlane(moveDir, slopeNormal);
+        }
+        return moveDir;
+    }
+
+    void HandleSlopeSliding()
+    {
+        Vector3 slideDirection = Vector3.ProjectOnPlane(Vector3.down, slopeNormal).normalized;
+        rb.velocity += slideDirection * slopeAcceleration * Time.deltaTime;
     }
 
     void HandleStepBobbing()
     {
-        if (isGrounded && (Mathf.Abs(Input.GetAxis("Horizontal")) > 0.1f || Mathf.Abs(Input.GetAxis("Vertical")) > 0.1f))
-        {
-            stepTimer += Time.deltaTime * stepBobbingSpeed;
-            float bobbingOffset = Mathf.Sin(stepTimer) * stepBobbingAmount;
-            Vector3 newPos = camStandLocalPos;
-            newPos.y += bobbingOffset;
-            camTransform.localPosition = newPos;
-        }
-        else
-        {
-            stepTimer = 0f;
-            camTransform.localPosition = Vector3.Lerp(camTransform.localPosition, camStandLocalPos, Time.deltaTime * stepBobbingSpeed);
-        }
+        if (!isGrounded) return;
+
+        stepTimer += Time.deltaTime * stepBobbingSpeed;
+        float bobbingOffset = Mathf.Sin(stepTimer) * stepBobbingAmount;
+
+        camTransform.localPosition = camStandLocalPos + new Vector3(0, bobbingOffset, 0);
     }
 
     void Crouch()
@@ -203,9 +219,7 @@ public class Movement : MonoBehaviour
 
     void UpdateUI()
     {
-        if (healthSlider != null)
-            healthSlider.value = currentHealth;
-        if (staminaSlider != null)
-            staminaSlider.value = currentStamina;
+        if (healthSlider != null) healthSlider.value = currentHealth;
+        if (staminaSlider != null) staminaSlider.value = currentStamina;
     }
 }
