@@ -16,6 +16,7 @@ TagManager:
   - Buildables
   - Furniture/Items
   - Bush
+  - Npc
   layers:
   - Default
   - TransparentFX
