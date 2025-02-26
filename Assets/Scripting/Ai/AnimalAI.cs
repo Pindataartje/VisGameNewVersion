@@ -4,6 +4,8 @@ using System.Collections;
 
 public class AnimalAI : MonoBehaviour
 {
+    
+
     public enum BehaviorType { Approach, Flee }
     public BehaviorType behavior;
 
@@ -17,6 +19,8 @@ public class AnimalAI : MonoBehaviour
     public float wanderTimer = 5f;
     public float fleeDistance = 15f;
     public float walkSpeed = 3.5f;
+    public float health = 100f;
+
 
     private float runSpeed;
     private Transform player;
@@ -41,6 +45,8 @@ public class AnimalAI : MonoBehaviour
             StartCoroutine(Wander());
         }
         agent.speed = walkSpeed;
+
+       
     }
 
     void Update()
@@ -78,6 +84,7 @@ public class AnimalAI : MonoBehaviour
         {
             StartCoroutine(Wander());
         }
+        print(health);
     }
 
     void MoveTowardsOrAway(float distanceToPlayer)
@@ -147,5 +154,20 @@ public class AnimalAI : MonoBehaviour
 
             yield return new WaitUntil(() => agent.remainingDistance <= 0.5f);
         }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        // Handle the animal's death (e.g., destroy the object or play an animation)
+        Destroy(gameObject);  // Example of destroying the animal on death.
     }
 }

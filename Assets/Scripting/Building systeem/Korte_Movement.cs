@@ -21,8 +21,7 @@ public class Korte_Movement : MonoBehaviour
     private float xRotation = 0f;
     private bool onFloor;
 
-    [Header("Overzeten naar ander script")]
-    public Quest quest; // als we meer quests tegelijk willen moeten we hier een list van maken
+    
 
     void Start()
     {
@@ -35,7 +34,7 @@ public class Korte_Movement : MonoBehaviour
         MouseLook();
         Movement();
         HandleInteraction();
-        CompleteQuest();
+       
     }
 
     void FixedUpdate()
@@ -103,28 +102,11 @@ public class Korte_Movement : MonoBehaviour
             {
                 if (hit.collider.CompareTag("Npc"))
                 {
-                    QuestGiver questGiver = hit.collider.GetComponent<QuestGiver>();
-                    if (questGiver != null)
-                    {
-                        questGiver.OpenQuestWindow(); // Assuming there's a GiveQuest() method in QuestGiver
-                    }
+                  
                 }
             }
         }
     }
 
-    public void CompleteQuest()
-    {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (quest.isActive)
-            {
-                quest.goal.EnemyKilled();
-                if (quest.goal.isReached())
-                {
-                    quest.Complete();
-                }
-            }
-        }
-    }
+    
 }
