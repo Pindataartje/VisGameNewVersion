@@ -3304,12 +3304,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 880770574}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1000, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1238648796}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &962290293
 GameObject:
@@ -4954,7 +4954,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 880770577}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1238648797
@@ -5687,25 +5688,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04cde757fe102ff42bcd342bd1029259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  place: {x: 0, y: 0, z: 0}
-  tempObject: {fileID: 0}
-  buildableObjects:
-  - {fileID: 6702091435391230379, guid: de4aa053cb2c89245bf8b8517987935c, type: 3}
-  - {fileID: 5205165243160521749, guid: d647fe6f3e7b33c48ad37ccfee505336, type: 3}
-  tempObjects:
-  - {fileID: 2111413527115566461, guid: 396fe54afc66d994db71324942db31db, type: 3}
-  - {fileID: 2530083557515405078, guid: 4664e22813f22bb41b42addc7c180414, type: 3}
-  selectedObjectIndex: 0
-  placeNow: 0
-  tempObjectExist: 0
-  range: 100
-  distance: 0
-  objectInRange: 0
-  player: {fileID: 1425648294}
-  inBuildMode: 0
-  buildCanvas: {fileID: 0}
-  gridSize: 0.1
-  inDestructionMode: 0
 --- !u!114 &1425648297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5722,9 +5704,9 @@ MonoBehaviour:
   jumpHeight: 5
   lookSensitivity: 100
   cameraTransform: {fileID: 1779278877}
-  groundLayer:
+  jumpableLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
 --- !u!136 &1425648298
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -5809,7 +5791,7 @@ Transform:
   m_GameObject: {fileID: 1425648294}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1002, y: 18.2, z: 629.62}
+  m_LocalPosition: {x: 552, y: 151.8, z: 372}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6401,10 +6383,10 @@ MonoBehaviour:
   maxTessellationFactor: 3
   tessellationFactorFadeStart: 150
   tessellationFactorFadeRange: 1850
-  refractionColor: {r: 0.14083776, g: 0.72538227, b: 0.8562991, a: 1}
+  refractionColor: {r: 0, g: 0, b: 0, a: 1}
   maxRefractionDistance: 2
-  absorptionDistance: 10
-  scatteringColor: {r: 0, g: 0.10753616, b: 0.3812781, a: 1}
+  absorptionDistance: 9
+  scatteringColor: {r: 0.026176762, g: 0.14324969, b: 0.16988078, a: 1}
   ambientScattering: 0.446
   heightScattering: 0.5
   displacementScattering: 1
@@ -9747,7 +9729,6 @@ SceneRoots:
   - {fileID: 677815618}
   - {fileID: 1814958366}
   - {fileID: 1238648796}
-  - {fileID: 880770577}
   - {fileID: 776957253}
   - {fileID: 443794983}
   - {fileID: 1586464101}
