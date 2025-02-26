@@ -28,11 +28,11 @@ public class WeaponHandler : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && canAttack)
         {
-            SwordAttack();
+            Attack();
         }
     }
 
-    public void SwordAttack()
+    public void Attack()
     {
         canAttack = false;
         Animator anim = weapon.GetComponent<Animator>();

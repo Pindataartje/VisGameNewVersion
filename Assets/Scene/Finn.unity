@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 15124.248, g: 13892.979, b: 12232.61, a: 1}
+  m_IndirectSpecularColor: {r: 15130.377, g: 13898.635, b: 12238.688, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -127,6 +127,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 557013302}
     m_Modifications:
+    - target: {fileID: 7367371962970477491, guid: b90fe1603b677564da431dcfd8f47460,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 04ad8e0996b2a8042ae445c31271041a, type: 2}
     - target: {fileID: 8535734271553890524, guid: b90fe1603b677564da431dcfd8f47460,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3351,8 +3356,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8936272118092896371, guid: 3b5fd7dbeabd722498dc0b8759d56169,
         type: 3}
+      propertyPath: attackRange
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8936272118092896371, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
       propertyPath: stayAtHideSpot
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

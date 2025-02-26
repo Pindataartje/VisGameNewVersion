@@ -4,8 +4,6 @@ using System.Collections;
 
 public class AnimalAI : MonoBehaviour
 {
-    
-
     public enum BehaviorType { Approach, Flee }
     public BehaviorType behavior;
 
@@ -20,7 +18,7 @@ public class AnimalAI : MonoBehaviour
     public float fleeDistance = 15f;
     public float walkSpeed = 3.5f;
     public float health = 100f;
-
+    private bool isAttacking = false;
 
     private float runSpeed;
     private Transform player;
@@ -29,6 +27,10 @@ public class AnimalAI : MonoBehaviour
     private GameObject lastHidingSpot = null;
     private Vector3 lastWanderPosition;
     private bool isChasing = false;
+
+    // Attack cooldown
+    private float attackCooldown = 1f; // Time in seconds between attacks
+    private float lastAttackTime = 0f;
 
     void Start()
     {
@@ -45,8 +47,6 @@ public class AnimalAI : MonoBehaviour
             StartCoroutine(Wander());
         }
         agent.speed = walkSpeed;
-
-       
     }
 
     void Update()
@@ -91,7 +91,12 @@ public class AnimalAI : MonoBehaviour
     {
         if (distanceToPlayer <= attackRange)
         {
-            Attack();
+            // Only allow attacking if enough time has passed
+            if (Time.time - lastAttackTime >= attackCooldown)
+            {
+                Attack();
+                lastAttackTime = Time.time; // Update the time of the last attack
+            }
         }
         else
         {
