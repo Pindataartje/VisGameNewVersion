@@ -266,18 +266,18 @@ if (Input.GetKeyDown(KeyCode.Alpha3))
         // Get the connector's normal to determine if it's a wall or floor
         Vector3 connectorNormal = connector.transform.up; // Assuming 'up' is the direction of the normal for the connector.
 
-        // If it's a wall, apply rotation
+        // If it's a wall, apply rotation based on its normal
         if (IsWall(connectorNormal))
         {
-            // Get only the Y-axis rotation of the connector
-            float connectorYRotation = connector.transform.eulerAngles.y;
+            // Get the connector's rotation and apply manual rotation
+            Quaternion connectorRotation = connector.transform.rotation;
 
-            // Apply the connector's Y rotation + player's manual rotation
-            ghostbuildObject.transform.rotation = Quaternion.Euler(0f, connectorYRotation + currentRotationAngle, 0f);
+            // Apply the connector's rotation + player's manual rotation
+            ghostbuildObject.transform.rotation = Quaternion.Euler(0f, connectorRotation.eulerAngles.y + currentRotationAngle, 0f);
         }
         else
         {
-            // If it's the floor, don't apply any rotation
+            // If it's the floor, just apply manual Y-axis rotation (no need to adjust based on normal)
             ghostbuildObject.transform.rotation = Quaternion.Euler(0f, currentRotationAngle, 0f);
         }
 
