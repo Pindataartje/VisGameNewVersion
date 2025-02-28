@@ -6,15 +6,18 @@ public class Movement : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float walkSpeed = 5f;
+    public float crouchSpeed = 2.5f;
     public float jumpForce = 5f;
-    public float airControlMultiplier = 0.3f; // Reduced to allow momentum in air
-    public float slopeAcceleration = 3f; // Increases movement down slopes
-    public float maxSlopeAngle = 45f; // Determines when to start sliding
+    public float airControlMultiplier = 0.3f;
+    public float slopeAcceleration = 3f;
+    public float maxSlopeAngle = 45f;
 
     [Header("Sprinting Settings")]
     public float sprintMultiplier = 1.5f;
     public float staminaConsumptionRate = 20f;
     public float staminaRecoveryRate = 10f;
+    public float sprintCooldownThreshold = 20f;
+    public float jumpStaminaCost = 15f;
 
     [Header("Step Bobbing Settings")]
     public float stepBobbingSpeed = 10f;
@@ -22,8 +25,10 @@ public class Movement : MonoBehaviour
 
     [Header("Crouch Settings")]
     public Transform crouchCameraTarget;
-    public float crouchColliderHeight = 1.213064f;
-    public float crouchColliderCenterY = -0.3628699f;
+    public float crouchSpeedMultiplier = 0.5f; // Slow movement while crouching
+    public float defaultPlayerScale = 1.5f; // Default player scale
+    public float crouchPlayerScale = 0.8f;  // Scale when crouching
+    public float scaleSpeed = 8f; // How fast scaling transitions
 
     [Header("Player Stats")]
     public float maxHealth = 100f;
@@ -36,34 +41,28 @@ public class Movement : MonoBehaviour
     [Header("References")]
     public CinemachineVirtualCamera virtualCamera;
     public CapsuleCollider capsuleCollider;
-    public LayerMask groundLayer; // For better slope detection
+    public LayerMask groundLayer;
 
     private Rigidbody rb;
     private Transform camTransform;
     private Vector3 camStandLocalPos;
-    private float standColliderHeight;
-    private Vector3 standColliderCenter;
     private bool isCrouching = false;
     private float stepTimer = 0f;
     private bool isGrounded = false;
     private bool isSliding = false;
+    private bool canSprint = true;
+    private bool isMoving = false;
     private Vector3 slopeNormal;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true; // Prevents unintended physics rotations
+        rb.freezeRotation = true;
 
         if (virtualCamera != null)
         {
             camTransform = virtualCamera.transform;
             camStandLocalPos = camTransform.localPosition;
-        }
-
-        if (capsuleCollider != null)
-        {
-            standColliderHeight = capsuleCollider.height;
-            standColliderCenter = capsuleCollider.center;
         }
 
         if (healthSlider != null)
@@ -103,21 +102,31 @@ public class Movement : MonoBehaviour
     {
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
+        isMoving = (moveX != 0 || moveZ != 0);
+
         Vector3 moveDir = (transform.right * moveX + transform.forward * moveZ).normalized;
 
-        float currentSpeed = walkSpeed;
-        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded && moveDir.magnitude > 0.1f && currentStamina > 0;
+        float currentSpeed = isCrouching ? crouchSpeed : walkSpeed;
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded && moveDir.magnitude > 0.1f && canSprint;
 
         if (isSprinting)
         {
-            currentSpeed *= sprintMultiplier;
-            currentStamina -= staminaConsumptionRate * Time.deltaTime;
-            if (currentStamina < 0) currentStamina = 0;
+            if (currentStamina > 0)
+            {
+                currentSpeed *= sprintMultiplier;
+                currentStamina -= staminaConsumptionRate * Time.deltaTime;
+                if (currentStamina <= 0)
+                {
+                    currentStamina = 0;
+                    canSprint = false;
+                }
+            }
         }
         else
         {
             currentStamina += staminaRecoveryRate * Time.deltaTime;
             if (currentStamina > maxStamina) currentStamina = maxStamina;
+            if (currentStamina >= sprintCooldownThreshold) canSprint = true;
         }
 
         if (isGrounded)
@@ -131,9 +140,10 @@ public class Movement : MonoBehaviour
             rb.velocity += new Vector3(airMove.x, 0, airMove.z) * Time.deltaTime;
         }
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump") && isGrounded && currentStamina >= jumpStaminaCost)
         {
             rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+            currentStamina -= jumpStaminaCost;
         }
 
         if (Input.GetKey(KeyCode.LeftControl))
@@ -177,7 +187,7 @@ public class Movement : MonoBehaviour
 
     void HandleStepBobbing()
     {
-        if (!isGrounded) return;
+        if (!isGrounded || !isMoving) return;
 
         stepTimer += Time.deltaTime * stepBobbingSpeed;
         float bobbingOffset = Mathf.Sin(stepTimer) * stepBobbingAmount;
@@ -190,14 +200,7 @@ public class Movement : MonoBehaviour
         if (!isCrouching)
         {
             isCrouching = true;
-            if (virtualCamera != null && crouchCameraTarget != null)
-                camTransform.localPosition = crouchCameraTarget.localPosition;
-
-            if (capsuleCollider != null)
-            {
-                capsuleCollider.height = crouchColliderHeight;
-                capsuleCollider.center = new Vector3(standColliderCenter.x, crouchColliderCenterY, standColliderCenter.z);
-            }
+            StartCoroutine(ScalePlayer(crouchPlayerScale));
         }
     }
 
@@ -206,14 +209,21 @@ public class Movement : MonoBehaviour
         if (isCrouching)
         {
             isCrouching = false;
-            if (virtualCamera != null)
-                camTransform.localPosition = camStandLocalPos;
+            StartCoroutine(ScalePlayer(defaultPlayerScale));
+        }
+    }
 
-            if (capsuleCollider != null)
-            {
-                capsuleCollider.height = standColliderHeight;
-                capsuleCollider.center = standColliderCenter;
-            }
+    System.Collections.IEnumerator ScalePlayer(float targetScale)
+    {
+        Vector3 startScale = transform.localScale;
+        Vector3 endScale = new Vector3(startScale.x, targetScale, startScale.z);
+        float time = 0f;
+
+        while (time < 1f)
+        {
+            time += Time.deltaTime * scaleSpeed;
+            transform.localScale = Vector3.Lerp(startScale, endScale, time);
+            yield return null;
         }
     }
 

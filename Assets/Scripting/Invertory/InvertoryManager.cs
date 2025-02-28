@@ -9,6 +9,11 @@ public class InventoryManager : MonoBehaviour
     public TextMeshProUGUI itemInfoText; // UI text to show item count
     private ItemSlot hoveredSlot; // Track hovered slot
 
+    [Header("Equipment Settings")]
+    public Transform handPoint; // Assign this to the HandPoint in the player
+    private GameObject equippedItem = null; // Stores the currently equipped item
+    private ItemSlot equippedSlot = null; // Tracks which slot the item came from
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -24,6 +29,21 @@ public class InventoryManager : MonoBehaviour
             {
                 TryDropHoveredItem();
             }
+
+            if (Input.GetMouseButtonDown(0)) // Left Click to equip
+            {
+                TryEquipHoveredItem();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.X)) // Unequip item
+        {
+            UnequipItem();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q)) // Drop equipped item
+        {
+            DropEquippedItem();
         }
     }
 
@@ -46,27 +66,96 @@ public class InventoryManager : MonoBehaviour
             if (newHoveredSlot == null && hit.collider.transform.parent != null)
                 newHoveredSlot = hit.collider.transform.parent.GetComponent<ItemSlot>();
 
-            if (newHoveredSlot != hoveredSlot) // Only log when the hovered item changes
+            if (newHoveredSlot != hoveredSlot)
             {
                 hoveredSlot = newHoveredSlot;
-
-                if (hoveredSlot != null)
-                {
-                    itemInfoText.text = $"{hoveredSlot.itemTag}: {hoveredSlot.GetItemCount()}";
-                    Debug.Log($"✅ Detected Inventory Item: {hoveredSlot.itemTag} - Count: {hoveredSlot.GetItemCount()}");
-                }
-                else
-                {
-                    itemInfoText.text = "";
-                    Debug.Log("❌ Cursor is over something, but it's NOT an inventory item.");
-                }
             }
+
+            UpdateItemText();
         }
-        else if (hoveredSlot != null) // Log only when the cursor moves away from an item
+        else if (hoveredSlot != null)
         {
             hoveredSlot = null;
             itemInfoText.text = "";
-            Debug.Log("❌ Cursor is not over any object.");
+        }
+    }
+
+    void TryEquipHoveredItem()
+    {
+        if (hoveredSlot != null && hoveredSlot.GetItemCount() > 0 && equippedItem == null)
+        {
+            GameObject itemToEquip = hoveredSlot.RemoveItem();
+            if (itemToEquip)
+            {
+                equippedItem = itemToEquip;
+                equippedSlot = hoveredSlot;
+
+                // Set item in hand
+                itemToEquip.transform.SetParent(handPoint);
+                itemToEquip.transform.localPosition = Vector3.zero;
+                itemToEquip.transform.localRotation = Quaternion.identity;
+                itemToEquip.SetActive(true);
+
+                // Disable physics
+                if (itemToEquip.TryGetComponent(out Rigidbody rb))
+                    rb.isKinematic = true;
+
+                if (itemToEquip.TryGetComponent(out Collider col))
+                    col.enabled = false;
+
+                Debug.Log($"✅ Equipped: {equippedSlot.itemTag}");
+                UpdateItemText();
+            }
+        }
+    }
+
+    void UnequipItem()
+    {
+        if (equippedItem != null && equippedSlot != null)
+        {
+            // Check if inventory has space
+            if (!equippedSlot.IsFull())
+            {
+                equippedSlot.StoreItem(equippedItem);
+                equippedItem = null;
+                equippedSlot = null;
+                Debug.Log("✅ Unequipped item back into inventory.");
+            }
+            else
+            {
+                Debug.Log("❌ Inventory full, dropping unequipped item.");
+                DropEquippedItem();
+            }
+
+            UpdateItemText();
+        }
+    }
+
+    void DropEquippedItem()
+    {
+        if (equippedItem != null)
+        {
+            equippedItem.SetActive(true);
+            equippedItem.transform.position = dropPosition.position;
+            equippedItem.transform.SetParent(null);
+
+            // Re-enable physics
+            if (equippedItem.TryGetComponent(out Rigidbody rb))
+            {
+                rb.isKinematic = false;
+                rb.detectCollisions = true;
+            }
+
+            if (equippedItem.TryGetComponent(out Collider col))
+            {
+                col.enabled = true;
+            }
+
+            Debug.Log($"✅ Dropped equipped item: {equippedItem.name}");
+            equippedItem = null;
+            equippedSlot = null;
+
+            UpdateItemText();
         }
     }
 
@@ -74,7 +163,6 @@ public class InventoryManager : MonoBehaviour
     {
         if (hoveredSlot != null)
         {
-            Debug.Log($"Dropping item from slot: {hoveredSlot.itemTag}");
             DropItem(hoveredSlot);
         }
         else
@@ -85,7 +173,7 @@ public class InventoryManager : MonoBehaviour
 
     void DropItem(ItemSlot slot)
     {
-        if (slot == null || slot.GetItemCount() <= 0)  // Prevent invalid drops
+        if (slot == null || slot.GetItemCount() <= 0)
         {
             Debug.Log("❌ Tried to drop an item, but inventory slot is empty.");
             return;
@@ -98,28 +186,32 @@ public class InventoryManager : MonoBehaviour
             droppedItem.transform.position = dropPosition.position;
             droppedItem.transform.SetParent(null);
 
-            // Re-enable physics and floater for dropped item
             if (droppedItem.TryGetComponent(out Rigidbody rb))
-            {
                 rb.isKinematic = false;
-                rb.detectCollisions = true;
-            }
-
-            if (droppedItem.TryGetComponent(out Floater floater))
-            {
-                floater.enabled = true;
-            }
 
             if (droppedItem.TryGetComponent(out Collider col))
-            {
                 col.enabled = true;
-            }
 
             Debug.Log($"✅ Dropped: {slot.itemTag}");
+
+            UpdateItemText();
         }
         else
         {
             Debug.Log("❌ Tried to drop an item, but no object was returned.");
+        }
+    }
+
+    void UpdateItemText()
+    {
+        if (hoveredSlot != null)
+        {
+            int count = hoveredSlot.GetItemCount();
+            itemInfoText.text = count > 0 ? $"{hoveredSlot.itemTag}: {count}" : "";
+        }
+        else
+        {
+            itemInfoText.text = "";
         }
     }
 }

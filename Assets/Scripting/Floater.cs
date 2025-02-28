@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 
 public class Floater : MonoBehaviour
@@ -18,8 +18,30 @@ public class Floater : MonoBehaviour
     private WaterSearchParameters searchParams;
     private WaterSearchResult searchResult;
 
+    private void Start()
+    {
+        // If the water surface is not assigned, try to find it automatically
+        if (water == null)
+        {
+            water = FindObjectOfType<WaterSurface>();
+
+            if (water == null)
+            {
+                Debug.LogError("❌ No WaterSurface object found in the scene! Please add an HDRP Water Surface.");
+                enabled = false; // Disable the script to prevent further errors
+                return;
+            }
+            else
+            {
+                Debug.Log("🌊 WaterSurface automatically assigned: " + water.gameObject.name);
+            }
+        }
+    }
+
     private void FixedUpdate()
     {
+        if (water == null) return; // Stop if no water is assigned
+
         // Apply gravity divided by the number of floaters
         rb.AddForceAtPosition(Physics.gravity / floaters, transform.position, ForceMode.Acceleration);
 
