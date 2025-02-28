@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 21.780573, g: 22.70978, b: 22.476809, a: 1}
+  m_IndirectSpecularColor: {r: 21.78454, g: 22.719622, b: 22.496477, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -8245,14 +8245,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 776339162}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.043719836, y: -0.003230806, z: 0.07362614, w: 0.9963219}
-  m_LocalPosition: {x: -29.4, y: 85.8, z: -12.7}
+  m_LocalRotation: {x: -0, y: -0, z: 0.1123357, w: 0.9936704}
+  m_LocalPosition: {x: -18.8, y: 78.3, z: 21}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 764858467}
   m_Father: {fileID: 2145400037}
-  m_LocalEulerAnglesHint: {x: -4.97, y: -0.741, z: 8.485}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 12.9}
 --- !u!199 &776339164
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -8337,7 +8337,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 776339162}
   serializedVersion: 8
-  lengthInSec: 10
+  lengthInSec: 0.05
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -8519,7 +8519,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 0.56078434}
+      maxColor: {r: 0.05660379, g: 0.052865803, b: 0.052865803, a: 0.56078434}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -8967,7 +8967,7 @@ ParticleSystem:
     radiusThickness: 1
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
-    m_Rotation: {x: 0, y: 20, z: 40}
+    m_Rotation: {x: 0, y: 0, z: 0}
     m_Scale: {x: 118, y: 1, z: 151}
     placementMode: 0
     m_MeshMaterialIndex: 0
@@ -9604,11 +9604,11 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 1, b: 1, a: 0}
-        key1: {r: 1, g: 1, b: 1, a: 1}
+        key0: {r: 0.04150939, g: 0.040921994, b: 0.040334597, a: 0}
+        key1: {r: 0.01886791, g: 0.01860091, b: 0.018333912, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 1}
         key3: {r: 0, g: 0, b: 0, a: 0}
-        key4: {r: 0, g: 0, b: 0, a: 1}
+        key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
@@ -9621,8 +9621,8 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 9098
-        atime2: 55975
+        atime1: 9021
+        atime2: 55589
         atime3: 65535
         atime4: 65535
         atime5: 0
@@ -12085,10 +12085,10 @@ ParticleSystem:
         m_RotationOrder: 4
     minKillSpeed: 0
     maxKillSpeed: 10000
-    radiusScale: 1
+    radiusScale: 1.24
     collidesWith:
       serializedVersion: 2
-      m_Bits: 16
+      m_Bits: 2079
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
@@ -12111,7 +12111,7 @@ ParticleSystem:
     subEmitters:
     - serializedVersion: 3
       emitter: {fileID: 764858469}
-      type: 2
+      type: 1
       properties: 0
       emitProbability: 1
   LightsModule:
