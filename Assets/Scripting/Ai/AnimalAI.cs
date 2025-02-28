@@ -18,7 +18,7 @@ public class AnimalAI : MonoBehaviour
     public float fleeDistance = 15f;
     public float walkSpeed = 3.5f;
     public float health = 100f;
-    private bool isAttacking = false;
+    
 
     private float runSpeed;
     private Transform player;

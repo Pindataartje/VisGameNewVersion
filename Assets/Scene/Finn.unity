@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 15130.377, g: 13898.697, b: 12238.845, a: 1}
+  m_IndirectSpecularColor: {r: 15123.85, g: 13892.463, b: 12232.321, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -470,6 +470,119 @@ Transform:
   - {fileID: 1035524607}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &503776846
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1138172059225274730, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -17.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 1138172059225274730, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.529398
+      objectReference: {fileID: 0}
+    - target: {fileID: 1138172059225274730, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 14.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 1138172059225274730, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1138172059225274730, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1138172059225274730, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1138172059225274730, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1138172059225274730, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1138172059225274730, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1138172059225274730, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3958196316481114406, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_Height
+      value: 2.6686783
+      objectReference: {fileID: 0}
+    - target: {fileID: 3958196316481114406, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_Radius
+      value: 0.7098446
+      objectReference: {fileID: 0}
+    - target: {fileID: 3958196316481114406, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_Center.x
+      value: 0.027181625
+      objectReference: {fileID: 0}
+    - target: {fileID: 3958196316481114406, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_Center.y
+      value: -0.039409637
+      objectReference: {fileID: 0}
+    - target: {fileID: 3958196316481114406, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_Center.z
+      value: -0.00000011920929
+      objectReference: {fileID: 0}
+    - target: {fileID: 3958196316481114406, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6735035447012116783, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_Name
+      value: Bear (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6735035447012116783, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8936272118092896371, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: attackRange
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8936272118092896371, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+        type: 3}
+      propertyPath: stayAtHideSpot
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3b5fd7dbeabd722498dc0b8759d56169, type: 3}
 --- !u!1001 &552985344
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1294,6 +1407,12 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!1 &1036054207 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6735035447012116783, guid: 3b5fd7dbeabd722498dc0b8759d56169,
+    type: 3}
+  m_PrefabInstance: {fileID: 4225418426330942277}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1103723487
 GameObject:
   m_ObjectHideFlags: 0
@@ -1523,6 +1642,7 @@ GameObject:
   - component: {fileID: 1242354752}
   - component: {fileID: 1242354751}
   - component: {fileID: 1242354750}
+  - component: {fileID: 1242354754}
   m_Layer: 0
   m_Name: Berend
   m_TagString: Npc
@@ -1614,7 +1734,79 @@ Transform:
   m_GameObject: {fileID: 1242354748}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 19.8, y: 1.76, z: -2.23}
+  m_LocalPosition: {x: 19.8, y: 1.76, z: -2.76}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1242354754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242354748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e5a82b0d93e3b74b92e501a6adb6139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  questManager: {fileID: 1247125975}
+  availableQuests:
+  - questName: BIll the bear
+    questDescription: Kill bill the bear!!
+    questType: 1
+    targetAmount: 2
+    currentAmount: 0
+    targetItemTag: 
+    targetEnemy: {fileID: 1036054207}
+    isAccepted: 0
+    isCompleted: 0
+  questUIPanel: {fileID: 648118360}
+  questNameText: {fileID: 1503452283}
+  questDescriptionText: {fileID: 1103723489}
+--- !u!1 &1247125974
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1247125976}
+  - component: {fileID: 1247125975}
+  m_Layer: 0
+  m_Name: QuestManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1247125975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1247125974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ef498ed73f0e5040ac2643263f7cc0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeQuests: []
+  maxActiveQuests: 3
+--- !u!4 &1247125976
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1247125974}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 14.750863, y: -7.41405, z: -16.986704}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1703,8 +1895,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: QuestGiver, Assembly-CSharp
+      - m_Target: {fileID: 1247125975}
+        m_TargetAssemblyTypeName: QuestManager, Assembly-CSharp
         m_MethodName: AcceptQuest
         m_Mode: 1
         m_Arguments:
@@ -2637,6 +2829,7 @@ GameObject:
   - component: {fileID: 1566669328}
   - component: {fileID: 1566669327}
   - component: {fileID: 1566669326}
+  - component: {fileID: 1566669330}
   m_Layer: 0
   m_Name: Brend2.0
   m_TagString: Npc
@@ -2734,6 +2927,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1566669330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1566669324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e5a82b0d93e3b74b92e501a6adb6139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  questManager: {fileID: 1247125975}
+  availableQuests:
+  - questName: xanderDownie
+    questDescription: Xander heeft down
+    questType: 1
+    targetAmount: 2
+    currentAmount: 0
+    targetItemTag: 
+    targetEnemy: {fileID: 0}
+    isAccepted: 0
+    isCompleted: 0
+  questUIPanel: {fileID: 648118360}
+  questNameText: {fileID: 1503452283}
+  questDescriptionText: {fileID: 1103723489}
 --- !u!1 &1614273845
 GameObject:
   m_ObjectHideFlags: 0
@@ -4211,9 +4430,11 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1425890154}
+  - {fileID: 1247125976}
   - {fileID: 1614273849}
   - {fileID: 409752855}
   - {fileID: 4225418426330942277}
+  - {fileID: 503776846}
   - {fileID: 9122434021228753460}
   - {fileID: 1665919992}
   - {fileID: 648118364}
