@@ -9,10 +9,8 @@ public class InventoryManager : MonoBehaviour
     public TextMeshProUGUI itemInfoText; // UI text to show item count
     private ItemSlot hoveredSlot; // Track hovered slot
 
-    [Header("Equipment Settings")]
-    public Transform handPoint; // Assign this to the HandPoint in the player
-    private GameObject equippedItem = null; // Stores the currently equipped item
-    private ItemSlot equippedSlot = null; // Tracks which slot the item came from
+    // Reference to the PickupSystem script so we can call EquipItem
+    public PickupSystem pickupSystem;
 
     void Update()
     {
@@ -35,16 +33,6 @@ public class InventoryManager : MonoBehaviour
                 TryEquipHoveredItem();
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.X)) // Unequip item
-        {
-            UnequipItem();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Q)) // Drop equipped item
-        {
-            DropEquippedItem();
-        }
     }
 
     void ToggleInventory()
@@ -66,96 +54,13 @@ public class InventoryManager : MonoBehaviour
             if (newHoveredSlot == null && hit.collider.transform.parent != null)
                 newHoveredSlot = hit.collider.transform.parent.GetComponent<ItemSlot>();
 
-            if (newHoveredSlot != hoveredSlot)
-            {
-                hoveredSlot = newHoveredSlot;
-            }
-
+            hoveredSlot = newHoveredSlot;
             UpdateItemText();
         }
-        else if (hoveredSlot != null)
+        else
         {
             hoveredSlot = null;
             itemInfoText.text = "";
-        }
-    }
-
-    void TryEquipHoveredItem()
-    {
-        if (hoveredSlot != null && hoveredSlot.GetItemCount() > 0 && equippedItem == null)
-        {
-            GameObject itemToEquip = hoveredSlot.RemoveItem();
-            if (itemToEquip)
-            {
-                equippedItem = itemToEquip;
-                equippedSlot = hoveredSlot;
-
-                // Set item in hand
-                itemToEquip.transform.SetParent(handPoint);
-                itemToEquip.transform.localPosition = Vector3.zero;
-                itemToEquip.transform.localRotation = Quaternion.identity;
-                itemToEquip.SetActive(true);
-
-                // Disable physics
-                if (itemToEquip.TryGetComponent(out Rigidbody rb))
-                    rb.isKinematic = true;
-
-                if (itemToEquip.TryGetComponent(out Collider col))
-                    col.enabled = false;
-
-                Debug.Log($"✅ Equipped: {equippedSlot.itemTag}");
-                UpdateItemText();
-            }
-        }
-    }
-
-    void UnequipItem()
-    {
-        if (equippedItem != null && equippedSlot != null)
-        {
-            // Check if inventory has space
-            if (!equippedSlot.IsFull())
-            {
-                equippedSlot.StoreItem(equippedItem);
-                equippedItem = null;
-                equippedSlot = null;
-                Debug.Log("✅ Unequipped item back into inventory.");
-            }
-            else
-            {
-                Debug.Log("❌ Inventory full, dropping unequipped item.");
-                DropEquippedItem();
-            }
-
-            UpdateItemText();
-        }
-    }
-
-    void DropEquippedItem()
-    {
-        if (equippedItem != null)
-        {
-            equippedItem.SetActive(true);
-            equippedItem.transform.position = dropPosition.position;
-            equippedItem.transform.SetParent(null);
-
-            // Re-enable physics
-            if (equippedItem.TryGetComponent(out Rigidbody rb))
-            {
-                rb.isKinematic = false;
-                rb.detectCollisions = true;
-            }
-
-            if (equippedItem.TryGetComponent(out Collider col))
-            {
-                col.enabled = true;
-            }
-
-            Debug.Log($"✅ Dropped equipped item: {equippedItem.name}");
-            equippedItem = null;
-            equippedSlot = null;
-
-            UpdateItemText();
         }
     }
 
@@ -193,12 +98,29 @@ public class InventoryManager : MonoBehaviour
                 col.enabled = true;
 
             Debug.Log($"✅ Dropped: {slot.itemTag}");
-
             UpdateItemText();
         }
         else
         {
             Debug.Log("❌ Tried to drop an item, but no object was returned.");
+        }
+    }
+
+    void TryEquipHoveredItem()
+    {
+        if (hoveredSlot != null && hoveredSlot.GetItemCount() > 0)
+        {
+            // Optional: Check if handPoint is free before removing the item.
+            if (pickupSystem.handPoint.childCount > 0)
+            {
+                Debug.Log("❌ Cannot equip - Already holding an item!");
+                return;
+            }
+            // Remove the item from the inventory slot...
+            GameObject itemToEquip = hoveredSlot.RemoveItem();
+            // ...and pass it to PickupSystem to equip.
+            pickupSystem.EquipItem(itemToEquip);
+            UpdateItemText();
         }
     }
 

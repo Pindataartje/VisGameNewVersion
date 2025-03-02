@@ -19,6 +19,7 @@ TagManager:
   - Npc
   - Enemy
   - HarvestObj
+  - Food
   layers:
   - Default
   - TransparentFX

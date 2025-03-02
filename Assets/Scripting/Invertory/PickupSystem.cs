@@ -59,34 +59,67 @@ public class PickupSystem : MonoBehaviour
 
     public void EquipItem(GameObject item)
     {
-        // ✅ Allow equipping ONLY if handPoint is empty
+        // Ensure only one item is equipped at a time.
         if (handPoint.childCount > 0)
         {
             Debug.Log("❌ Cannot equip - Already holding an item!");
             return;
         }
 
-        // Move item to handPoint
+        // Move item to handPoint.
         item.transform.SetParent(handPoint);
         item.transform.localPosition = Vector3.zero;
         item.transform.localRotation = Quaternion.identity;
         item.SetActive(true);
 
-        // Disable physics
+        // Disable physics.
         if (item.TryGetComponent(out Rigidbody rb))
             rb.isKinematic = true;
-
         if (item.TryGetComponent(out Collider col))
             col.enabled = false;
+
+        // Look for and enable any scripts tagged as "Item".
+        MonoBehaviour[] components = item.GetComponents<MonoBehaviour>();
+        foreach (MonoBehaviour comp in components)
+        {
+            // Even if the component is disabled, GetComponents will return it.
+            var attributes = comp.GetType().GetCustomAttributes(typeof(ScriptTagAttribute), false);
+            foreach (object attr in attributes)
+            {
+                ScriptTagAttribute tagAttribute = attr as ScriptTagAttribute;
+                if (tagAttribute != null && tagAttribute.Tag == "Item")
+                {
+                    comp.enabled = true;  // Activate the script.
+                }
+            }
+        }
 
         Debug.Log($"✅ Equipped: {item.name}");
     }
 
+
     void UnequipItem()
     {
-        if (handPoint.childCount > 0) // ✅ Check if an item is equipped
+        if (handPoint.childCount > 0)
         {
             GameObject item = handPoint.GetChild(0).gameObject;
+
+            // Look for and disable any scripts tagged as "Item".
+            MonoBehaviour[] components = item.GetComponents<MonoBehaviour>();
+            foreach (MonoBehaviour comp in components)
+            {
+                var attributes = comp.GetType().GetCustomAttributes(typeof(ScriptTagAttribute), false);
+                foreach (object attr in attributes)
+                {
+                    ScriptTagAttribute tagAttribute = attr as ScriptTagAttribute;
+                    if (tagAttribute != null && tagAttribute.Tag == "Item")
+                    {
+                        comp.enabled = false;  // Deactivate the script.
+                    }
+                }
+            }
+
+            // Now return the item to the inventory or drop it.
             string itemTag = item.tag;
             ItemSlot correctSlot = FindCorrectSlot(itemTag);
 
@@ -102,6 +135,7 @@ public class PickupSystem : MonoBehaviour
             }
         }
     }
+
 
     void DropEquippedItem()
     {

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 11556.522, g: 10605.7705, b: 9332.743, a: 1}
+  m_IndirectSpecularColor: {r: 11556.522, g: 10605.864, b: 9332.72, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -7176,7 +7176,7 @@ MonoBehaviour:
   inventoryUI: {fileID: 1069273995}
   dropPosition: {fileID: 716593340}
   itemInfoText: {fileID: 123392744}
-  handPoint: {fileID: 599539184}
+  pickupSystem: {fileID: 950680129}
 --- !u!23 &1671894833
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7787,6 +7787,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1825965779}
   m_CullTransparentMesh: 1
+--- !u!1 &1831441392 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5317117957995336392, guid: 7e12fe1b118010d469cbbd0eb933e801,
+    type: 3}
+  m_PrefabInstance: {fileID: 2018901698}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1831441399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831441392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8ea058ea2697cb4c84a4be4b4272628, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healAmount: 20
 --- !u!1 &1840191216
 GameObject:
   m_ObjectHideFlags: 0
@@ -8834,7 +8853,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5317117957995336392, guid: 7e12fe1b118010d469cbbd0eb933e801,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1831441399}
   m_SourcePrefab: {fileID: 100100000, guid: 7e12fe1b118010d469cbbd0eb933e801, type: 3}
 --- !u!1 &2054898448
 GameObject:

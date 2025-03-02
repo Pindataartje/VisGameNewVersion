@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 458216957225485628}
   - component: {fileID: 8316695359812275642}
   - component: {fileID: 7750077884046189358}
+  - component: {fileID: 7314924374737602497}
   m_Layer: 0
   m_Name: Stone
   m_TagString: Rock
@@ -29,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5317117957995336392}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 16.493, y: 3.1999998, z: -171.59}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
@@ -157,3 +158,16 @@ MonoBehaviour:
   waterDrag: 0.99
   waterAngularDrag: 0.5
   water: {fileID: 0}
+--- !u!114 &7314924374737602497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5317117957995336392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8ea058ea2697cb4c84a4be4b4272628, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healAmount: 20
