@@ -1,6 +1,5 @@
 using JetBrains.Annotations;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum QuestType
@@ -18,58 +17,50 @@ public class Quest
     public QuestType questType;
     public int targetAmount;  // How many enemies to kill or items to gather
     public int currentAmount; // Current progress on quest
-    public string targetItemTag; // For Gather quests, using a tag rather than an item name
-    public GameObject targetEnemy; // For Kill quests
-    public bool isAccepted; // New flag: only update progress when quest is accepted
+
+    // For Gather quests, using a tag rather than an item name.
+    public string targetItemTag;
+
+    // For Kill quests, we now use a target enemy tag instead of a target GameObject.
+    public string targetEnemyTag = "Enemy";
+
+    public bool isAccepted; // Only update progress when quest is accepted
     public bool isCompleted;
 
+    // This method simply checks whether the quest is complete.
     public void UpdateProgress()
     {
-        // Only update progress if the quest is accepted.
         if (!isAccepted)
             return;
 
-        // Update progress depending on the type of quest
-        if (questType == QuestType.Kill)
-        {
-            // Only update progress if the enemy is dead (i.e., targetEnemy is null)
-            if (targetEnemy != null)
-                return;
-            currentAmount++;
-        }
-        // For Gather quests, progress is now updated via the CollectedItem method.
-
-        // Mark as completed if progress is met
         if (currentAmount >= targetAmount)
         {
             isCompleted = true;
         }
     }
 
-    public void Killed()
+    // Called when an enemy is killed. Checks that the killed enemy has the correct tag.
+    public void Killed(GameObject killedEnemy)
     {
-        // Only update if the quest is accepted and of type Kill.
         if (!isAccepted || questType != QuestType.Kill)
             return;
 
-        // Increment progress since an enemy has been killed.
-        currentAmount++;
-
-        // Mark the quest as complete if the target amount has been reached.
-        if (currentAmount >= targetAmount)
+        if (killedEnemy.CompareTag(targetEnemyTag))
         {
-            isCompleted = true;
+            currentAmount++;
+            if (currentAmount >= targetAmount)
+            {
+                isCompleted = true;
+            }
         }
     }
 
-    // New method: Update progress for Gather quests using the item's tag.
+    // Called when a gatherable item is collected.
     public void CollectedItem(GameObject item)
     {
-        // Only update if the quest is accepted and of type Gather.
         if (!isAccepted || questType != QuestType.Gather)
             return;
 
-        // Check if the collected item has the correct tag.
         if (item.CompareTag(targetItemTag))
         {
             currentAmount++;

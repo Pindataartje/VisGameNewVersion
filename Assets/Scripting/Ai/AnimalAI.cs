@@ -18,7 +18,6 @@ public class AnimalAI : MonoBehaviour
     public float fleeDistance = 15f;
     public float walkSpeed = 3.5f;
     public float health = 100f;
-    
 
     private float runSpeed;
     private Transform player;
@@ -28,7 +27,7 @@ public class AnimalAI : MonoBehaviour
     private Vector3 lastWanderPosition;
     private bool isChasing = false;
 
-    // Attack cooldown
+    // Attack cooldown.
     private float attackCooldown = 1f; // Time in seconds between attacks
     private float lastAttackTime = 0f;
 
@@ -91,11 +90,10 @@ public class AnimalAI : MonoBehaviour
     {
         if (distanceToPlayer <= attackRange)
         {
-            // Only allow attacking if enough time has passed
             if (Time.time - lastAttackTime >= attackCooldown)
             {
                 Attack();
-                lastAttackTime = Time.time; // Update the time of the last attack
+                lastAttackTime = Time.time;
             }
         }
         else
@@ -172,7 +170,16 @@ public class AnimalAI : MonoBehaviour
 
     private void Die()
     {
-        // Handle the animal's death (e.g., destroy the object or play an animation)
-        Destroy(gameObject);  // Example of destroying the animal on death.
+        // If this GameObject is tagged as "Enemy", notify the QuestManager.
+        if (CompareTag("Enemy"))
+        {
+            QuestManager questManager = FindObjectOfType<QuestManager>();
+            if (questManager != null)
+            {
+                questManager.EnemyKilled(gameObject);
+            }
+        }
+
+        Destroy(gameObject);
     }
 }

@@ -15,11 +15,21 @@ public class QuestGiver : MonoBehaviour
     private void Start()
     {
         if (questManager == null)
-            questManager = FindObjectOfType<QuestManager>(); // Find the QuestManager if not assigned
+        {
+            questManager = FindAnyObjectByType<QuestManager>(); // More efficient in newer Unity versions
+
+            if (questManager == null)
+            {
+                Debug.LogWarning("QuestManager not found in the scene. Make sure it exists.");
+            }
+        }
 
         // Ensure the quest UI is hidden at the start
         questUIPanel.SetActive(false);
     }
+     
+
+
 
     // Give a quest to the player and update the UI
     public void GiveQuest(int questIndex)
