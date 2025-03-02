@@ -139,9 +139,25 @@ public class PickupSystem : MonoBehaviour
 
     void DropEquippedItem()
     {
-        if (handPoint.childCount > 0) // ✅ Check if an item is equipped
+        if (handPoint.childCount > 0) // Check if an item is equipped
         {
             GameObject item = handPoint.GetChild(0).gameObject;
+
+            // Disable any "Item"-tagged scripts on the item
+            MonoBehaviour[] components = item.GetComponents<MonoBehaviour>();
+            foreach (MonoBehaviour comp in components)
+            {
+                var attributes = comp.GetType().GetCustomAttributes(typeof(ScriptTagAttribute), false);
+                foreach (object attr in attributes)
+                {
+                    ScriptTagAttribute tagAttribute = attr as ScriptTagAttribute;
+                    if (tagAttribute != null && tagAttribute.Tag == "Item")
+                    {
+                        comp.enabled = false;  // Deactivate the script.
+                    }
+                }
+            }
+
             item.SetActive(true);
             item.transform.position = dropPosition.position;
             item.transform.SetParent(null);
@@ -161,6 +177,7 @@ public class PickupSystem : MonoBehaviour
             Debug.Log($"✅ Dropped: {item.name}");
         }
     }
+
 
     ItemSlot FindCorrectSlot(string itemTag)
     {

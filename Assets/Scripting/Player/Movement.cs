@@ -38,6 +38,10 @@ public class Movement : MonoBehaviour
     public Slider healthSlider;
     public Slider staminaSlider;
 
+    [Header("Fall Damage Settings")]
+    public float fallDamageThreshold = 3f;
+    public float fallDamageMultiplier = 10f; // Damage per unit of fall distance beyond threshold
+
     [Header("References")]
     public CinemachineVirtualCamera virtualCamera;
     public CapsuleCollider capsuleCollider;
@@ -53,6 +57,13 @@ public class Movement : MonoBehaviour
     private bool canSprint = true;
     private bool isMoving = false;
     private Vector3 slopeNormal;
+
+    // Variables for fall damage
+    private bool wasGrounded = true;
+    private float fallStartHeight;
+
+    // Variable to store jump direction
+    private Vector3 jumpDirection = Vector3.zero;
 
     void Start()
     {
@@ -79,7 +90,45 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
-        CheckGround();
+        // --- Ground & Fall Damage Check ---
+        // Use a raycast from near the bottom of the capsule
+        Vector3 rayOrigin = new Vector3(transform.position.x, capsuleCollider.bounds.min.y + 0.05f, transform.position.z);
+        RaycastHit hit;
+        float rayLength = 0.2f; // A short distance from the base
+        if (Physics.Raycast(rayOrigin, Vector3.down, out hit, rayLength, groundLayer))
+        {
+            isGrounded = true;
+            slopeNormal = hit.normal;
+            float angle = Vector3.Angle(Vector3.up, slopeNormal);
+            isSliding = angle > maxSlopeAngle;
+        }
+        else
+        {
+            isGrounded = false;
+            isSliding = false;
+        }
+
+        // --- Fall Damage ---
+        // If we just left the ground, record the height.
+        if (wasGrounded && !isGrounded)
+        {
+            fallStartHeight = transform.position.y;
+        }
+        // If we just landed, calculate fall damage.
+        if (!wasGrounded && isGrounded)
+        {
+            float fallDistance = fallStartHeight - transform.position.y;
+            if (fallDistance > fallDamageThreshold)
+            {
+                float damage = (fallDistance - fallDamageThreshold) * fallDamageMultiplier;
+                currentHealth -= damage;
+                Debug.Log("Fall damage taken: " + damage);
+                if (currentHealth < 0) currentHealth = 0;
+            }
+        }
+        wasGrounded = isGrounded;
+
+        // --- Input & Movement ---
         HandleInput();
 
         if (!isCrouching)
@@ -104,6 +153,7 @@ public class Movement : MonoBehaviour
         float moveZ = Input.GetAxis("Vertical");
         isMoving = (moveX != 0 || moveZ != 0);
 
+        // Calculate desired move direction based on input.
         Vector3 moveDir = (transform.right * moveX + transform.forward * moveZ).normalized;
 
         float currentSpeed = isCrouching ? crouchSpeed : walkSpeed;
@@ -131,43 +181,45 @@ public class Movement : MonoBehaviour
 
         if (isGrounded)
         {
+            // Reset jumpDirection when grounded.
+            jumpDirection = Vector3.zero;
             Vector3 moveVector = AdjustVelocityForSlope(moveDir * currentSpeed);
             rb.velocity = new Vector3(moveVector.x, rb.velocity.y, moveVector.z);
         }
         else
         {
+            // In air, restrict input to mostly the original jump direction.
+            if (jumpDirection != Vector3.zero)
+            {
+                float dot = Vector3.Dot(jumpDirection, moveDir);
+                // Only allow air control if input is in roughly the same direction as the jump.
+                if (dot < 0.1f)
+                {
+                    moveDir = Vector3.zero;
+                }
+            }
             Vector3 airMove = moveDir * (currentSpeed * airControlMultiplier);
-            rb.velocity += new Vector3(airMove.x, 0, airMove.z) * Time.deltaTime;
+            // Here we add a small correction to the horizontal velocity.
+            rb.velocity = new Vector3(rb.velocity.x + airMove.x * Time.deltaTime, rb.velocity.y, rb.velocity.z + airMove.z * Time.deltaTime);
         }
 
+        // Jumping: only allow if grounded.
         if (Input.GetButtonDown("Jump") && isGrounded && currentStamina >= jumpStaminaCost)
         {
+            // Record the input move direction as jump direction.
+            jumpDirection = moveDir;
+            // If no input, use the forward direction.
+            if (jumpDirection == Vector3.zero)
+                jumpDirection = transform.forward;
             rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
             currentStamina -= jumpStaminaCost;
         }
 
+        // Crouching
         if (Input.GetKey(KeyCode.LeftControl))
             Crouch();
         else
             StandUp();
-    }
-
-    void CheckGround()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, capsuleCollider.bounds.extents.y + 0.2f, groundLayer))
-        {
-            isGrounded = true;
-            slopeNormal = hit.normal;
-
-            float angle = Vector3.Angle(Vector3.up, slopeNormal);
-            isSliding = angle > maxSlopeAngle;
-        }
-        else
-        {
-            isGrounded = false;
-            isSliding = false;
-        }
     }
 
     Vector3 AdjustVelocityForSlope(Vector3 moveDir)
@@ -191,7 +243,6 @@ public class Movement : MonoBehaviour
 
         stepTimer += Time.deltaTime * stepBobbingSpeed;
         float bobbingOffset = Mathf.Sin(stepTimer) * stepBobbingAmount;
-
         camTransform.localPosition = camStandLocalPos + new Vector3(0, bobbingOffset, 0);
     }
 
