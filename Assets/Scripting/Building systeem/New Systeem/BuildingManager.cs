@@ -11,6 +11,8 @@ public class BuildingManager : MonoBehaviour
     [SerializeField] private List<GameObject> floorobjects = new List<GameObject>();
     [SerializeField] private List<GameObject> wallobjectts = new List<GameObject>();
     [SerializeField] private List<GameObject> freeformObjects = new List<GameObject>();
+    [SerializeField] private List<GameObject> roofObjects = new List<GameObject>(); // Added for roof objects
+
 
     [Header("Build Settings")]
     [SerializeField] private SelectedBuildType currentBuildType;
@@ -407,12 +409,14 @@ if (Input.GetKeyDown(KeyCode.Alpha3))
                 return floorobjects[currentBuildingIndex];
             case SelectedBuildType.Wall:
                 return wallobjectts[currentBuildingIndex];
+            case SelectedBuildType.Roof:  // Added Roof selection
+                return roofObjects[currentBuildingIndex];
             case SelectedBuildType.FreeFrom:
                 return freeformObjects[currentBuildingIndex];
         }
-
         return null;
     }
+
 
     private void PlaceBuild()
     {
@@ -496,6 +500,17 @@ if (Input.GetKeyDown(KeyCode.Alpha3))
             lastHighlightedBuilding = null;
         }
     }
+    public void SetBuildType(SelectedBuildType newBuildType)
+    {
+        currentBuildType = newBuildType;
+        currentBuildingIndex = Mathf.Clamp(currentBuildingIndex, 0, wallobjectts.Count - 1);
+    }
+    public void SetBuildIndex(int newIndex)
+    {
+        currentBuildingIndex = newIndex;
+        Debug.Log("Build index set to: " + currentBuildingIndex);
+    }
+
 }
 [System.Serializable]
 public enum SelectedBuildType
