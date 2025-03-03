@@ -20,6 +20,7 @@ TagManager:
   - Enemy
   - HarvestObj
   - Food
+  - Berry
   layers:
   - Default
   - TransparentFX
