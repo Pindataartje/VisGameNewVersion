@@ -502,5 +502,7 @@ public enum SelectedBuildType
 {
     Floor,
     Wall,
+    Roof,
     FreeFrom
+
 }
