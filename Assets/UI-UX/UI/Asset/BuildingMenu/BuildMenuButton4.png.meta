@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 81ce6046d5735b2449f11d86c918048f
+guid: d472270ff5a2edc4ca4cb111e161504a
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -21,7 +21,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 1
+  isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: AnchorDrawing_0
+      name: BuildMenuButton4_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 400
-        height: 400
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,8 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ff9a839be62d173458fc7e90856b229d
-      internalID: 669291284
+      spriteID: fd3f2b8c71b9b2742b4a5f702c09cdfe
+      internalID: 31493708
       vertices: []
       indices: 
       edges: []
@@ -133,7 +133,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 8413222442dcaa443b55b77b9ac39487
+    spriteID: 858032f3c6ca1f044ac4d1ec7cab0e6d
     internalID: 0
     vertices: []
     indices: 
@@ -141,7 +141,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      AnchorDrawing_0: 669291284
+      BuildMenuButton4_0: 31493708
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 81ce6046d5735b2449f11d86c918048f
+guid: 3e7cd4034b8803940bd866240a16668b
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: AnchorDrawing_0
+      name: BuildMenuTest_0
       rect:
         serializedVersion: 2
         x: 0
@@ -124,8 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ff9a839be62d173458fc7e90856b229d
-      internalID: 669291284
+      spriteID: 857c28a095da25848ac17ded0dcc7d80
+      internalID: 1082651537
       vertices: []
       indices: 
       edges: []
@@ -133,7 +133,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 8413222442dcaa443b55b77b9ac39487
+    spriteID: 2a5e13faaeb7ed4408a5740ba629b644
     internalID: 0
     vertices: []
     indices: 
@@ -141,7 +141,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      AnchorDrawing_0: 669291284
+      BuildMenuTest_0: 1082651537
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
