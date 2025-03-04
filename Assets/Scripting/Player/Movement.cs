@@ -42,10 +42,22 @@ public class Movement : MonoBehaviour
     public float fallDamageThreshold = 3f;
     public float fallDamageMultiplier = 10f; // Damage per unit of fall distance beyond threshold
 
+    [Header("Cursor & UI Settings")]
+    // Drag any GameObjects here that should unlock the cursor (and disable rotation) when active.
+    public GameObject[] importantGameObjects;
+
+    [Header("Slope Sliding Settings")]
+    // This multiplier scales the sliding force on steeper slopes.
+    public float steepSlopeMultiplier = 2f;
+
     [Header("References")]
     public CinemachineVirtualCamera virtualCamera;
     public CapsuleCollider capsuleCollider;
     public LayerMask groundLayer;
+
+    // Rotation scripts will be located by type.
+    public HorizontalRotation[] horizontalRotationScripts;
+    public VerticalRotation[] verticalRotationScripts;
 
     private Rigidbody rb;
     private Transform camTransform;
@@ -65,10 +77,17 @@ public class Movement : MonoBehaviour
     // Variable to store jump direction
     private Vector3 jumpDirection = Vector3.zero;
 
+    // Duration during which the cursor is forced to be locked/hidden.
+    private const float forceLockDuration = 2f;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+
+        // Force lock and hide the cursor at start.
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         if (virtualCamera != null)
         {
@@ -86,15 +105,31 @@ public class Movement : MonoBehaviour
             staminaSlider.maxValue = maxStamina;
             staminaSlider.value = currentStamina;
         }
+
+        // Find the rotation scripts by type.
+        horizontalRotationScripts = FindObjectsOfType<HorizontalRotation>();
+        verticalRotationScripts = FindObjectsOfType<VerticalRotation>();
     }
 
     void Update()
     {
+        // For the first few seconds, force the cursor to be locked/hidden.
+        if (Time.timeSinceLevelLoad < forceLockDuration)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            EnableRotationScripts(true);
+        }
+        else
+        {
+            // Handle cursor state and rotation script enabling/disabling based on UI.
+            HandleCursorLockState();
+        }
+
         // --- Ground & Fall Damage Check ---
-        // Use a raycast from near the bottom of the capsule
         Vector3 rayOrigin = new Vector3(transform.position.x, capsuleCollider.bounds.min.y + 0.05f, transform.position.z);
         RaycastHit hit;
-        float rayLength = 0.2f; // A short distance from the base
+        float rayLength = 0.2f; // A short distance from the base.
         if (Physics.Raycast(rayOrigin, Vector3.down, out hit, rayLength, groundLayer))
         {
             isGrounded = true;
@@ -109,12 +144,10 @@ public class Movement : MonoBehaviour
         }
 
         // --- Fall Damage ---
-        // If we just left the ground, record the height.
         if (wasGrounded && !isGrounded)
         {
             fallStartHeight = transform.position.y;
         }
-        // If we just landed, calculate fall damage.
         if (!wasGrounded && isGrounded)
         {
             float fallDistance = fallStartHeight - transform.position.y;
@@ -181,41 +214,33 @@ public class Movement : MonoBehaviour
 
         if (isGrounded)
         {
-            // Reset jumpDirection when grounded.
             jumpDirection = Vector3.zero;
             Vector3 moveVector = AdjustVelocityForSlope(moveDir * currentSpeed);
             rb.velocity = new Vector3(moveVector.x, rb.velocity.y, moveVector.z);
         }
         else
         {
-            // In air, restrict input to mostly the original jump direction.
             if (jumpDirection != Vector3.zero)
             {
                 float dot = Vector3.Dot(jumpDirection, moveDir);
-                // Only allow air control if input is in roughly the same direction as the jump.
                 if (dot < 0.1f)
                 {
                     moveDir = Vector3.zero;
                 }
             }
             Vector3 airMove = moveDir * (currentSpeed * airControlMultiplier);
-            // Here we add a small correction to the horizontal velocity.
             rb.velocity = new Vector3(rb.velocity.x + airMove.x * Time.deltaTime, rb.velocity.y, rb.velocity.z + airMove.z * Time.deltaTime);
         }
 
-        // Jumping: only allow if grounded.
         if (Input.GetButtonDown("Jump") && isGrounded && currentStamina >= jumpStaminaCost)
         {
-            // Record the input move direction as jump direction.
             jumpDirection = moveDir;
-            // If no input, use the forward direction.
             if (jumpDirection == Vector3.zero)
                 jumpDirection = transform.forward;
             rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
             currentStamina -= jumpStaminaCost;
         }
 
-        // Crouching
         if (Input.GetKey(KeyCode.LeftControl))
             Crouch();
         else
@@ -233,8 +258,10 @@ public class Movement : MonoBehaviour
 
     void HandleSlopeSliding()
     {
+        float slopeAngle = Vector3.Angle(Vector3.up, slopeNormal);
         Vector3 slideDirection = Vector3.ProjectOnPlane(Vector3.down, slopeNormal).normalized;
-        rb.velocity += slideDirection * slopeAcceleration * Time.deltaTime;
+        float slideMultiplier = Mathf.Lerp(1f, steepSlopeMultiplier, Mathf.InverseLerp(maxSlopeAngle, 90f, slopeAngle));
+        rb.velocity += slideDirection * slopeAcceleration * slideMultiplier * Time.deltaTime;
     }
 
     void HandleStepBobbing()
@@ -282,5 +309,56 @@ public class Movement : MonoBehaviour
     {
         if (healthSlider != null) healthSlider.value = currentHealth;
         if (staminaSlider != null) staminaSlider.value = currentStamina;
+    }
+
+    // Checks the important gameobjects and updates the cursor and rotation scripts accordingly.
+    void HandleCursorLockState()
+    {
+        bool anyUIActive = false;
+        if (importantGameObjects != null)
+        {
+            foreach (GameObject go in importantGameObjects)
+            {
+                if (go != null && go.activeInHierarchy)
+                {
+                    anyUIActive = true;
+                    break;
+                }
+            }
+        }
+
+        if (anyUIActive)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            EnableRotationScripts(false);
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            EnableRotationScripts(true);
+        }
+    }
+
+    // Enables or disables all rotation scripts found in the scene.
+    void EnableRotationScripts(bool enable)
+    {
+        if (horizontalRotationScripts != null)
+        {
+            foreach (HorizontalRotation hr in horizontalRotationScripts)
+            {
+                if (hr != null)
+                    hr.enabled = enable;
+            }
+        }
+        if (verticalRotationScripts != null)
+        {
+            foreach (VerticalRotation vr in verticalRotationScripts)
+            {
+                if (vr != null)
+                    vr.enabled = enable;
+            }
+        }
     }
 }
