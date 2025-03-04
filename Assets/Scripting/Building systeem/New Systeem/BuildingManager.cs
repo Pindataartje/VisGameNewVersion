@@ -32,16 +32,18 @@ public class BuildingManager : MonoBehaviour
     private bool isGhostInValidPosistion = false;
     private Transform modelParent = null;
     private GameObject lastHighlightedBuilding;
+
     private Dictionary<GameObject, Material[]> originalMaterials = new Dictionary<GameObject, Material[]>();
 
     private float currentRotationAngle = 0f; // Store the current rotation angle of the object
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.L))
+
+        if (Input.GetKeyDown(KeyCode.B))
         {
-            isbuilding = !isbuilding;
-            isDeleting = false;
+            isbuilding = false;
+           
 
             if (!isbuilding && ghostbuildObject)
             {
@@ -49,11 +51,7 @@ public class BuildingManager : MonoBehaviour
                 ghostbuildObject = null;
             }
 
-            if (lastHighlightedBuilding != null)
-            {
-                ResetBuildingMaterial(lastHighlightedBuilding);
-                lastHighlightedBuilding = null;
-            }
+
         }
 
         if (Input.GetKeyDown(KeyCode.X))
@@ -165,7 +163,19 @@ if (Input.GetKeyDown(KeyCode.Alpha3))
             checkBuildVadility();
         }
     }
+    public void ActivateBuildMode()
+    {
+        isbuilding = true;
+        isDeleting = false;
 
+        if (lastHighlightedBuilding != null)
+        {
+            ResetBuildingMaterial(lastHighlightedBuilding);
+            lastHighlightedBuilding = null;
+        }
+
+        Debug.Log("Build mode activated!");
+    }
     private void CreateGhostPrefab(GameObject currentbuild)
     {
         if (currentbuild == null)

@@ -30,6 +30,9 @@ public class ColliderHandeling : MonoBehaviour
                 weaponHandler.AddHitEnemy(other);
             }
         }
-       
+        else if (other.CompareTag("Material"))
+        {
+            
+        }
     }
 }

@@ -7,6 +7,9 @@ public class BuildingUi : MonoBehaviour
 {
     public BuildingManager bmanager;
 
+
+   
+
     public void SetBuildObject()
     {
         if (bmanager != null)
