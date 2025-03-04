@@ -38,7 +38,7 @@ public class BuildingManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.L))
         {
             isbuilding = !isbuilding;
             isDeleting = false;
