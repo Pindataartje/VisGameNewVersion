@@ -11,17 +11,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 9da7152c00f03ca479fc8a4d528e7ff4,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 528.76654
+      value: 2355.7776
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9da7152c00f03ca479fc8a4d528e7ff4,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 105.98791
+      value: 9.249607
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9da7152c00f03ca479fc8a4d528e7ff4,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 399.78348
+      value: 676.1957
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9da7152c00f03ca479fc8a4d528e7ff4,
         type: 3}
@@ -86,5 +86,38 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9da7152c00f03ca479fc8a4d528e7ff4,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4997552619116231155}
   m_SourcePrefab: {fileID: 100100000, guid: 9da7152c00f03ca479fc8a4d528e7ff4, type: 3}
+--- !u!1 &5906928002335827542 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 9da7152c00f03ca479fc8a4d528e7ff4,
+    type: 3}
+  m_PrefabInstance: {fileID: 6717389775743343367}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &4997552619116231155
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5906928002335827542}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.0583673
+  m_Height: 17.285892
+  m_Direction: 1
+  m_Center: {x: 0, y: 6.278513, z: 0}

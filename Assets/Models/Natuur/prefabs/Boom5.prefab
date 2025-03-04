@@ -11,17 +11,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: bcbc177c2e5237c47b31b9f8f30a6375,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 541.1643
+      value: 2361.3997
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bcbc177c2e5237c47b31b9f8f30a6375,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 105.98793
+      value: 7.929318
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bcbc177c2e5237c47b31b9f8f30a6375,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 413.25296
+      value: 675.1639
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bcbc177c2e5237c47b31b9f8f30a6375,
         type: 3}
@@ -86,5 +86,38 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bcbc177c2e5237c47b31b9f8f30a6375,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8725195087270531109}
   m_SourcePrefab: {fileID: 100100000, guid: bcbc177c2e5237c47b31b9f8f30a6375, type: 3}
+--- !u!1 &29421896828803440 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: bcbc177c2e5237c47b31b9f8f30a6375,
+    type: 3}
+  m_PrefabInstance: {fileID: 912523040142943265}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &8725195087270531109
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29421896828803440}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.4447908
+  m_Height: 36.425434
+  m_Direction: 1
+  m_Center: {x: 0, y: 17.168566, z: 0}

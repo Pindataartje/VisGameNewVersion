@@ -11,17 +11,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 8cc4f48d4e1d95e4ab37855d2880a143,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 523.80853
+      value: 2344.1414
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8cc4f48d4e1d95e4ab37855d2880a143,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 105.9879
+      value: 9.048023
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8cc4f48d4e1d95e4ab37855d2880a143,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 441.84177
+      value: 675.4685
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8cc4f48d4e1d95e4ab37855d2880a143,
         type: 3}
@@ -86,5 +86,38 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8cc4f48d4e1d95e4ab37855d2880a143,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1134390489794157445}
   m_SourcePrefab: {fileID: 100100000, guid: 8cc4f48d4e1d95e4ab37855d2880a143, type: 3}
+--- !u!1 &2148314615372571722 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8cc4f48d4e1d95e4ab37855d2880a143,
+    type: 3}
+  m_PrefabInstance: {fileID: 1229818132248582427}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1134390489794157445
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2148314615372571722}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.8910074
+  m_Height: 16.442162
+  m_Direction: 1
+  m_Center: {x: 0, y: 6.017952, z: 0}
