@@ -11,17 +11,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: bdeccda34ec15d343b68dee61d1ff020,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2346.16
+      value: 2586.0923
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bdeccda34ec15d343b68dee61d1ff020,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8.669178
+      value: 22.9
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bdeccda34ec15d343b68dee61d1ff020,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 675.91077
+      value: -1286.642
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bdeccda34ec15d343b68dee61d1ff020,
         type: 3}
@@ -31,7 +31,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: bdeccda34ec15d343b68dee61d1ff020,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bdeccda34ec15d343b68dee61d1ff020,
         type: 3}
@@ -60,6 +60,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: bdeccda34ec15d343b68dee61d1ff020,
         type: 3}
+      propertyPath: m_StaticShadowCaster
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: bdeccda34ec15d343b68dee61d1ff020,
+        type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 50ae4bdbb6194854aa524df98226cfe0, type: 2}
@@ -82,6 +87,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Boom1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: bdeccda34ec15d343b68dee61d1ff020,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
