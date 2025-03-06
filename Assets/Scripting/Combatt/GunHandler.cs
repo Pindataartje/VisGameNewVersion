@@ -2,18 +2,13 @@ using UnityEngine;
 
 public class GunHandler : MonoBehaviour
 {
-    [Header("Gun Objects")]
-    public GameObject flareGun;
-
-    // Define the types of guns supported.
-    public enum GunType { Crossbow, FlareGun }
+    
+    public enum GunType { Crossbow }
     public GunType gunType = GunType.Crossbow;
-
-   
 
     [Header("Gun Settings")]
     [Tooltip("Amount of damage this gun deals")]
-    public float damage = 0f;
+    public float damage = 10f;
 
     [Header("Sound Settings")]
     public AudioClip crossbowSound;
@@ -39,6 +34,12 @@ public class GunHandler : MonoBehaviour
         {
             Debug.LogWarning("Bullet spawn point not assigned!");
         }
+
+        if (gunType == GunType.Crossbow)
+        {
+            damage = 50f;
+        }
+        
     }
 
     void Update()
@@ -51,16 +52,43 @@ public class GunHandler : MonoBehaviour
 
     // Call this method to trigger a shooting action and instantiate the projectile at the specified spawn point.
     public void Shoot()
-    {
-        AudioSource.PlayClipAtPoint(crossbowSound, transform.position);
-
-        if (animController != null)
+    {       
+        if (gunType == GunType.Crossbow)
         {
-            animController.SetTrigger("Shoot");
+            ShootRaycast();
+        }
+    }
+
+    void ShootRaycast()
+    {
+        if (bulletSpawnPoint == null)
+        {
+            Debug.LogWarning("Bullet spawn point is not assigned!");
+            return;
         }
 
-       
-        // Ensure the bulletSpawnPoint is assigned and use it for the spawn position
-        
+        RaycastHit hit;
+        Vector3 direction = bulletSpawnPoint.forward;
+        Camera mainCam = Camera.main;
+
+        if (mainCam != null)
+        {
+            Ray ray = mainCam.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+            direction = (ray.direction).normalized;
+        }
+
+        if (Physics.Raycast(bulletSpawnPoint.position, direction, out hit, 100f))
+        {
+            if (hit.collider.CompareTag("Enemy")) // Check if the hit object has the "Enemy" tag
+            {
+                AnimalAI enemy = hit.collider.GetComponent<AnimalAI>(); // Get the AnimalAI component
+                if (enemy != null)
+                {
+                    enemy.TakeDamage(damage); // Call TakeDamage with the specified damage
+                    Debug.Log($"Hit enemy! Dealt {damage} damage.");
+                }
+            }
+
+        }
     }
 }
