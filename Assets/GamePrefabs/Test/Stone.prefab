@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 458216957225485628}
   - component: {fileID: 8316695359812275642}
   - component: {fileID: 7750077884046189358}
+  - component: {fileID: 8517428977058128269}
   m_Layer: 0
   m_Name: Stone
   m_TagString: Rock
@@ -157,3 +158,16 @@ MonoBehaviour:
   waterDrag: 0.99
   waterAngularDrag: 0.5
   water: {fileID: 0}
+--- !u!114 &8517428977058128269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5317117957995336392}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e24f746c88474ce4fbbb24090ab8e309, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventoryItemAdder: {fileID: 0}

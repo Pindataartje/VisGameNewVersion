@@ -21,6 +21,11 @@ TagManager:
   - HarvestObj
   - Food
   - Berry
+  - Spear
+  - FishingRod
+  - Fish
+  - Water
+  - Fish1
   layers:
   - Default
   - TransparentFX

@@ -78,11 +78,10 @@ public class PickupSystem : MonoBehaviour
         if (item.TryGetComponent(out Collider col))
             col.enabled = false;
 
-        // Look for and enable any scripts tagged as "Item".
+        // Activate any scripts tagged as "Item".
         MonoBehaviour[] components = item.GetComponents<MonoBehaviour>();
         foreach (MonoBehaviour comp in components)
         {
-            // Even if the component is disabled, GetComponents will return it.
             var attributes = comp.GetType().GetCustomAttributes(typeof(ScriptTagAttribute), false);
             foreach (object attr in attributes)
             {
@@ -93,10 +92,14 @@ public class PickupSystem : MonoBehaviour
                 }
             }
         }
+        // Additionally, if the item has an Animator, enable it.
+        if (item.TryGetComponent(out Animator anim))
+        {
+            anim.enabled = true;
+        }
 
         Debug.Log($"✅ Equipped: {item.name}");
     }
-
 
     void UnequipItem()
     {
@@ -104,7 +107,7 @@ public class PickupSystem : MonoBehaviour
         {
             GameObject item = handPoint.GetChild(0).gameObject;
 
-            // Look for and disable any scripts tagged as "Item".
+            // Disable any scripts tagged as "Item".
             MonoBehaviour[] components = item.GetComponents<MonoBehaviour>();
             foreach (MonoBehaviour comp in components)
             {
@@ -117,6 +120,11 @@ public class PickupSystem : MonoBehaviour
                         comp.enabled = false;  // Deactivate the script.
                     }
                 }
+            }
+            // Also disable the Animator if it exists.
+            if (item.TryGetComponent(out Animator anim))
+            {
+                anim.enabled = false;
             }
 
             // Now return the item to the inventory or drop it.
@@ -135,7 +143,6 @@ public class PickupSystem : MonoBehaviour
             }
         }
     }
-
 
     void DropEquippedItem()
     {
@@ -157,6 +164,11 @@ public class PickupSystem : MonoBehaviour
                     }
                 }
             }
+            // Also disable the Animator if it exists.
+            if (item.TryGetComponent(out Animator anim))
+            {
+                anim.enabled = false;
+            }
 
             item.SetActive(true);
             item.transform.position = dropPosition.position;
@@ -177,7 +189,6 @@ public class PickupSystem : MonoBehaviour
             Debug.Log($"✅ Dropped: {item.name}");
         }
     }
-
 
     ItemSlot FindCorrectSlot(string itemTag)
     {

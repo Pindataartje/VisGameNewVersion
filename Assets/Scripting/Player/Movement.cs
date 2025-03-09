@@ -22,6 +22,8 @@ public class Movement : MonoBehaviour
     [Header("Step Bobbing Settings")]
     public float stepBobbingSpeed = 10f;
     public float stepBobbingAmount = 0.1f;
+    public bool IsGrounded { get { return isGrounded; } }
+
 
     [Header("Crouch Settings")]
     public Transform crouchCameraTarget;
