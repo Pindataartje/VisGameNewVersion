@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 15120.279, g: 13889.361, b: 12228.548, a: 1}
+  m_IndirectSpecularColor: {r: 15140.877, g: 13908.881, b: 12248.759, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -190,7 +190,7 @@ PrefabInstance:
     - target: {fileID: 9024885672831922790, guid: b90fe1603b677564da431dcfd8f47460,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -898,6 +898,97 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &744510458
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1645907765872322451, guid: 688ae9b9077332d43a7c326993b51fc7,
+        type: 3}
+      propertyPath: m_Name
+      value: Boom1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2133757104846028073, guid: 688ae9b9077332d43a7c326993b51fc7,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 14.692158
+      objectReference: {fileID: 0}
+    - target: {fileID: 2133757104846028073, guid: 688ae9b9077332d43a7c326993b51fc7,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.13
+      objectReference: {fileID: 0}
+    - target: {fileID: 2133757104846028073, guid: 688ae9b9077332d43a7c326993b51fc7,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.056772
+      objectReference: {fileID: 0}
+    - target: {fileID: 2133757104846028073, guid: 688ae9b9077332d43a7c326993b51fc7,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2133757104846028073, guid: 688ae9b9077332d43a7c326993b51fc7,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2133757104846028073, guid: 688ae9b9077332d43a7c326993b51fc7,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2133757104846028073, guid: 688ae9b9077332d43a7c326993b51fc7,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2133757104846028073, guid: 688ae9b9077332d43a7c326993b51fc7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2133757104846028073, guid: 688ae9b9077332d43a7c326993b51fc7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2133757104846028073, guid: 688ae9b9077332d43a7c326993b51fc7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1645907765872322451, guid: 688ae9b9077332d43a7c326993b51fc7,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 744510460}
+  m_SourcePrefab: {fileID: 100100000, guid: 688ae9b9077332d43a7c326993b51fc7, type: 3}
+--- !u!1 &744510459 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1645907765872322451, guid: 688ae9b9077332d43a7c326993b51fc7,
+    type: 3}
+  m_PrefabInstance: {fileID: 744510458}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &744510460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 744510459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 429447d4d7e6b0f4f9e25eb08f146b10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tagToAssign: Wood
 --- !u!1 &1035524606
 GameObject:
   m_ObjectHideFlags: 0
@@ -3244,6 +3335,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86bc5886f3d13a14394116720a1e9e43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemTag: 
 --- !u!1 &2031464228
 GameObject:
   m_ObjectHideFlags: 0
@@ -4210,3 +4302,4 @@ SceneRoots:
   - {fileID: 417361753}
   - {fileID: 2041504822606455110}
   - {fileID: 2054430177383298182}
+  - {fileID: 744510458}

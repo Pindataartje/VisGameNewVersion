@@ -26,6 +26,7 @@ TagManager:
   - Fish
   - Water
   - Fish1
+  - Material
   layers:
   - Default
   - TransparentFX
