@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ScriptTag("Item")]
 public class ColliderHandeling : MonoBehaviour
 {
     private WeaponHandler weaponHandler;
     public string itemTag;
+    public InventoryItemAdder inventoryItemAdder;
+
 
     private void Start()
     {
@@ -41,7 +44,7 @@ public class ColliderHandeling : MonoBehaviour
             {
                 Debug.Log("Material hit with assigned tag: " + tagAssigner.tagToAssign);
                 itemTag = tagAssigner.tagToAssign;
-                
+                inventoryItemAdder.AddItemByTag(itemTag, 2);
             }
             else
             {

@@ -3,18 +3,25 @@
 public class PickupSystem : MonoBehaviour
 {
     public KeyCode pickupKey = KeyCode.E; // Pickup key
-    public KeyCode unequipKey = KeyCode.X; // Unequip key
-    public KeyCode dropKey = KeyCode.Q; // Drop equipped item key
+    public KeyCode unequipKey = KeyCode.X;  // Unequip key
+    public KeyCode dropKey = KeyCode.Q;     // Drop equipped item key
 
     public float pickupRange = 2f;
     public Transform playerCamera;
-    public Transform bag; // Assign the bag object in the Inspector
-    public Transform dropPosition; // Assign the drop position in front of the player
-    public Transform handPoint; // Assign the HandPoint where equipped items go
+    public Transform bag;         // The bag UI or container; its active state controls pickup ability.
+    public Transform dropPosition; // Position in front of the player for dropped items.
+    public Transform handPoint;    // Where equipped items go.
+
+    // When false, picking up items is disabled.
+    public bool canPickup = true;
 
     void Update()
     {
-        if (Input.GetKeyDown(pickupKey))
+        // Update canPickup based on whether the bag is active.
+        // If the bag is active (i.e. inventory open), disable pickup.
+        canPickup = !bag.gameObject.activeSelf;
+
+        if (canPickup && Input.GetKeyDown(pickupKey))
         {
             TryPickupItem();
         }
@@ -38,7 +45,7 @@ public class PickupSystem : MonoBehaviour
             GameObject item = hit.collider.gameObject;
             string itemTag = item.tag;
 
-            // Find the correct item slot
+            // Find the correct item slot.
             foreach (ItemSlot slot in bag.GetComponentsInChildren<ItemSlot>())
             {
                 if (slot.itemTag == itemTag)
@@ -146,11 +153,11 @@ public class PickupSystem : MonoBehaviour
 
     void DropEquippedItem()
     {
-        if (handPoint.childCount > 0) // Check if an item is equipped
+        if (handPoint.childCount > 0) // Check if an item is equipped.
         {
             GameObject item = handPoint.GetChild(0).gameObject;
 
-            // Disable any "Item"-tagged scripts on the item
+            // Disable any "Item"-tagged scripts on the item.
             MonoBehaviour[] components = item.GetComponents<MonoBehaviour>();
             foreach (MonoBehaviour comp in components)
             {
@@ -174,13 +181,12 @@ public class PickupSystem : MonoBehaviour
             item.transform.position = dropPosition.position;
             item.transform.SetParent(null);
 
-            // Re-enable physics
+            // Re-enable physics.
             if (item.TryGetComponent(out Rigidbody rb))
             {
                 rb.isKinematic = false;
                 rb.detectCollisions = true;
             }
-
             if (item.TryGetComponent(out Collider col))
             {
                 col.enabled = true;

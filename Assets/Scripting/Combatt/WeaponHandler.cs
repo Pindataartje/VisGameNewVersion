@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[ScriptTag("Item")]
 public class WeaponHandler : MonoBehaviour
 {
     public GameObject weapon;  // The weapon GameObject with the collider
