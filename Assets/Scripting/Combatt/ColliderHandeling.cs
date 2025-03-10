@@ -5,6 +5,7 @@ using UnityEngine;
 public class ColliderHandeling : MonoBehaviour
 {
     private WeaponHandler weaponHandler;
+    public string itemTag;
 
     private void Start()
     {
@@ -23,7 +24,8 @@ public class ColliderHandeling : MonoBehaviour
             AnimalAI animalAI = other.GetComponent<AnimalAI>();
             if (animalAI != null)
             {
-                animalAI.TakeDamage(10f);  // Example damage value
+                animalAI.TakeDamage(10f);  // Example damage val+
+                                           // ue
                 Debug.Log("Damage applied to " + animalAI.gameObject.name);
 
                 // Add the enemy to the hit list to prevent re-hitting until the cooldown
@@ -32,7 +34,19 @@ public class ColliderHandeling : MonoBehaviour
         }
         else if (other.CompareTag("Material"))
         {
-            
+            // Get the TagAssigner component from the collided object
+            TagAssigner tagAssigner = other.GetComponent<TagAssigner>();
+
+            if (tagAssigner != null)
+            {
+                Debug.Log("Material hit with assigned tag: " + tagAssigner.tagToAssign);
+                itemTag = tagAssigner.tagToAssign;
+                
+            }
+            else
+            {
+                Debug.Log("Material hit but has no TagAssigner component.");
+            }
         }
     }
 }
