@@ -68,6 +68,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Steen3
       objectReference: {fileID: 0}
+    - target: {fileID: 4159910566577504195, guid: e541019cfb5984c4cacc05c50c0d34c5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 726e518d84838bc44a3baf28e1f356ac, type: 2}
     - target: {fileID: 4742473837712756890, guid: e541019cfb5984c4cacc05c50c0d34c5,
         type: 3}
       propertyPath: m_LODs.Array.size
@@ -118,6 +123,11 @@ PrefabInstance:
       propertyPath: m_LODs.Array.data[3].renderers.Array.data[0].renderer
       value: 
       objectReference: {fileID: 1490711733100801946}
+    - target: {fileID: 8033550597151341120, guid: e541019cfb5984c4cacc05c50c0d34c5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 726e518d84838bc44a3baf28e1f356ac, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
