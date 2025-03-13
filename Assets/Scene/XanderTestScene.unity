@@ -39,7 +39,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 11565.134, g: 10579.61, b: 9248.071, a: 1}
+  m_IndirectSpecularColor: {r: 11566.882, g: 10582.333, b: 9250.548, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -87846,6 +87846,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Boom6 (23)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6098159966216094241, guid: c93e731d3ab479d46b6968fb692ca572,
+        type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.4292394
+      objectReference: {fileID: 0}
+    - target: {fileID: 6098159966216094241, guid: c93e731d3ab479d46b6968fb692ca572,
+        type: 3}
+      propertyPath: m_LODs.Array.data[2].screenRelativeHeight
+      value: 0.19835354
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
