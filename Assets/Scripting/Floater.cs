@@ -31,18 +31,9 @@ public class Floater : MonoBehaviour
         // If the water surface is not assigned, try to find it automatically.
         if (water == null)
         {
-            water = FindObjectOfType<WaterSurface>();
+            water = Object.FindFirstObjectByType<WaterSurface>();
 
-            if (water == null)
-            {
-                Debug.LogError("❌ No WaterSurface object found in the scene! Please add an HDRP Water Surface.");
-                enabled = false; // Disable the script to prevent further errors
-                return;
-            }
-            else
-            {
-                Debug.Log("🌊 WaterSurface automatically assigned: " + water.gameObject.name);
-            }
+
         }
     }
 

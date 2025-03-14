@@ -109,8 +109,9 @@ public class Movement : MonoBehaviour
         }
 
         // Find the rotation scripts by type.
-        horizontalRotationScripts = FindObjectsOfType<HorizontalRotation>();
-        verticalRotationScripts = FindObjectsOfType<VerticalRotation>();
+        horizontalRotationScripts = Object.FindObjectsByType<HorizontalRotation>(FindObjectsSortMode.None);
+        verticalRotationScripts = Object.FindObjectsByType<VerticalRotation>(FindObjectsSortMode.None);
+
     }
 
     void Update()

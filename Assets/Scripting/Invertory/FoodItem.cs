@@ -18,7 +18,8 @@ public class FoodItem : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             // Look for the Movement script (assumed to be on the player)
-            Movement movement = FindObjectOfType<Movement>();
+            Movement movement = Object.FindFirstObjectByType<Movement>();
+
             if (movement != null)
             {
                 movement.currentHealth += healAmount;
